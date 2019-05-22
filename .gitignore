@@ -1,0 +1,19 @@
+data/
+darknet/backup/
+darknet/obj/
+darknet/results/
+darknet/lib*
+
+build/
+*.pyc
+.vscode
+
+# mtcnn/weights
+mtcnn/mtcnn
+mtcnn/weights/
+
+torch_mtcnn/logs
+
+cmake-build-debug/
+.idea
+
