@@ -26,7 +26,8 @@ image _frame()
 {
     IplImage* iplFrame = cvQueryFrame(g_cvCap);
     // IplImage* iplFrame = cvLoadImage("/home/louishsu/Desktop/test.jpg", CV_LOAD_IMAGE_ANYCOLOR);
-    image dst = ipl_to_image(iplFrame);
+    image dst = ipl_to_image(iplFrame); // BGR
+    rgbgr_image(dst);                   // RGB
     return dst;
 }
 
@@ -52,7 +53,7 @@ void* detect_frame_in_thread(void* ptr)
     for (int i = 0; i < g_ndets; i++ ){
         detect det = g_dets[i];
         bbox bx = det.bx;
-        draw_box_width(frame, bx.x1, bx.y1, bx.x2, bx.y2, 3, 0, 0, 1);  // b, g, r
+        draw_box_width(frame, bx.x1, bx.y1, bx.x2, bx.y2, 3, 1, 0, 0);  // r, g, b
     }
 #else
     IplImage* iplFrame = image_to_ipl(g_imFrame[(g_index + 2) % 3]);

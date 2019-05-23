@@ -44,12 +44,6 @@ void show_ipl(IplImage* ipl, char* winname, int pause)
     cvDestroyWindow(winname);
 }
 
-void show_im(image im, char* winname, int pause)
-{
-    IplImage* ipl = image_to_ipl(im);
-    show_ipl(ipl, winname, pause);
-}
-
 image rgb_to_bgr(image im)
 {
     IplImage* ipl = image_to_ipl(im);

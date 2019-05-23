@@ -591,9 +591,12 @@ void _detect_onet(network *net, image im, int* n, detect** dets, params p)
 
 void detect_image(network *pnet, network *rnet, network *onet, image im, int* n, detect** dets, params p)
 {
-    _detect_pnet(pnet, im, n, dets, p);
-	_detect_rnet(rnet, im, n, dets, p);
-	_detect_onet(onet, im, n, dets, p);
+    image im_rgbgr = copy_image(im);
+    rgbgr_image(im_rgbgr);
+    _detect_pnet(pnet, im_rgbgr, n, dets, p);
+	_detect_rnet(rnet, im_rgbgr, n, dets, p);
+	_detect_onet(onet, im_rgbgr, n, dets, p);
+    free_image(im_rgbgr);
 }
 
 void show_detect(image im, detect* dets, int n, char* winname, int pause, int showscore, int showbox, int showmark)
@@ -641,7 +644,7 @@ void show_detect(image im, detect* dets, int n, char* winname, int pause, int sh
     for (int i = 0; i < n; i++ ){
         detect det = dets[i];
         bbox bx = det.bx;
-        draw_box_width(tmp, bx.x1, bx.y1, bx.x2, bx.y2, 3, 0, 0, 1);
+        draw_box_width(tmp, bx.x1, bx.y1, bx.x2, bx.y2, 3, 1, 0, 0);
     }
     show_image(tmp, winname, pause);
 #endif

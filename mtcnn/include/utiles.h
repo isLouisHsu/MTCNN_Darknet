@@ -9,7 +9,6 @@ IplImage *image_to_ipl(image im);
 image     ipl_to_image(IplImage* src);
 
 void  show_ipl(IplImage* ipl, char* winname, int pause);
-void  show_im(image im, char* winname, int pause);
 
 image rgb_to_bgr(image im);
 image resize_image_scale(image im, float scale);

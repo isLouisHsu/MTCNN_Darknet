@@ -13,8 +13,8 @@ void run_image(int argc, char **argv)
     if(0==strcmp(filepath, "../images/test.jpg")){
         fprintf(stderr, "Using default: %s\n", filepath);
     }
-    image im = load_image_color(filepath, 0, 0);
-    show_im(im, "image", 0);
+    image im = load_image_color(filepath, 0, 0);    // RGB, 0.~1.
+    show_image(im, "image", 0);
     printf("OK!\n");
 
     printf("Initializing detection...");
