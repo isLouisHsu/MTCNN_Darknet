@@ -598,7 +598,7 @@ void detect_image(network *pnet, network *rnet, network *onet, image im, int* n,
 
 void show_detect(image im, detect* dets, int n, char* winname, int pause, int showscore, int showbox, int showmark)
 {
-    image tmp = rgb_to_bgr(copy_image(im));
+    image tmp = copy_image(im);
 #if 0
     IplImage* ipl = image_to_ipl(tmp);
     CvFont font; cvInitFont(&font, CV_FONT_HERSHEY_SIMPLEX, 0.5, 0.5, 1, 2, 8);
@@ -641,7 +641,7 @@ void show_detect(image im, detect* dets, int n, char* winname, int pause, int sh
     for (int i = 0; i < n; i++ ){
         detect det = dets[i];
         bbox bx = det.bx;
-        draw_box_width(tmp, bx.x1, bx.y1, bx.x2, bx.y2, 3, 1, 0, 0);
+        draw_box_width(tmp, bx.x1, bx.y1, bx.x2, bx.y2, 3, 0, 0, 1);
     }
     show_image(tmp, winname, pause);
 #endif

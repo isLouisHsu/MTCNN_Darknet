@@ -93,7 +93,7 @@ void* detect_frame_in_thread(void* ptr)
 
 void* display_frame_in_thread(void* ptr)
 {
-    int c = show_image(rgb_to_bgr(g_imFrame[(g_index + 1) % 3]), winname, 1);
+    int c = show_image(g_imFrame[(g_index + 1) % 3], winname, 1);
     if (c != -1) c = c%256;
     if (c == 27) {
         g_videoDone = 1;
