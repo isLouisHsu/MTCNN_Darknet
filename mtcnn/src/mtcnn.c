@@ -648,6 +648,7 @@ void show_detect(image im, detect* dets, int n, char* winname, int pause, int sh
     }
     show_image(tmp, winname, pause);
 #endif
+    free_image(tmp);
 }
 
 #endif
