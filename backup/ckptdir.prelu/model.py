@@ -1,7 +1,7 @@
 import torch
 import torch.cuda as cuda
 import torch.nn as nn
-from utiles import finetune
+from utils import finetune
 
 class PNet(nn.Module):
 
