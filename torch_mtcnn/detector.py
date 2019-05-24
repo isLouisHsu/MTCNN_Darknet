@@ -7,7 +7,7 @@ import torch
 from torchvision.transforms import ToTensor
 
 from model import PNet, RNet, ONet
-from utiles import *
+from utils import *
 
 sigmoid = lambda x: 1 / (1 + np.e**(-x))
 

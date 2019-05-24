@@ -7,7 +7,7 @@ import torch as t
 from torch.utils.data   import Dataset
 from torchvision.transforms import ToTensor
 
-from utiles import getTime
+from utils import getTime
 
 ANNO = '../data/imglists/{}/{}_{}.txt'
 

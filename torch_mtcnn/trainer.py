@@ -11,7 +11,7 @@ from torch.utils.data import DataLoader
 from tensorboardX import SummaryWriter
 
 from processbar import ProcessBar
-from utiles import getTime
+from utils import getTime
 
 def summary(model, input_size, batch_size=-1, device="cuda"):
 
