@@ -1,4 +1,4 @@
-#include "utiles.h"
+#include "util.h"
 
 IplImage *image_to_ipl(image im)
 {
@@ -38,7 +38,7 @@ image ipl_to_image(IplImage* src)
 
 void show_ipl(IplImage* ipl, char* winname, int pause)
 {
-    cvNamedWindow(winname);
+    cvNamedWindow(winname, CV_WINDOW_AUTOSIZE);
     cvShowImage(winname, ipl);
     cvWaitKey(pause);
     cvDestroyWindow(winname);

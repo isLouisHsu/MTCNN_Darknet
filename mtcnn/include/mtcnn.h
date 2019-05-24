@@ -10,7 +10,7 @@
 #include "list.h"
 #include "image.h"
 #include "activations.h"
-#include "utiles.h"
+#include "util.h"
 
 // #define LIST 1
 

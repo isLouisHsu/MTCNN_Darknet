@@ -162,7 +162,7 @@ void run_video(int argc, char **argv)
         free_image(g_imFrame[i]);
     }
     free(g_dets);
-    cvReleaseCapture(g_cvCap);
+    cvReleaseCapture(&g_cvCap);
     cvDestroyWindow(winname);
 
     free_network(pnet);
