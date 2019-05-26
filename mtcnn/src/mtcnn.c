@@ -153,6 +153,17 @@ int _count_nzero(detect* dets, int n)
     return n_keep;
 }
 
+int _count_geq_thresh(detect* dets, int n, float thresh)
+{
+    int n_keep = 0;
+    for (int i = 0; i < n; i++){
+        float score = dets[i].score;
+        if ((score < thresh) || (isnan(score))) continue;
+        n_keep += 1;
+    }
+    return n_keep;
+}
+
 void _cal_box(detect* dets, int n)
 {
     for (int i = 0; i < n; i++ ){
@@ -353,11 +364,22 @@ void _detect_pnet(network *net, image im, int* n, detect** dets, params p)
 
     // keep boxes
     j = 0;
-    *n = _count_nzero(all_boxes, n_boxes);
-    *dets = realloc(*dets, *n*sizeof(detect));
-    for (int i = 0; i < n_boxes; i++ ){
-        if (all_boxes[i].score != 0){
-            (*dets)[j++] = all_boxes[i];
+    
+    if (p.softnms == 0){
+        *n = _count_nzero(all_boxes, n_boxes);
+        *dets = realloc(*dets, *n*sizeof(detect));
+        for (int i = 0; i < n_boxes; i++ ){
+            if (all_boxes[i].score != 0){
+                (*dets)[j++] = all_boxes[i];
+            }
+        }
+    } else {
+        *n = _count_geq_thresh(all_boxes, n_boxes, p.pthresh);
+        *dets = realloc(*dets, *n*sizeof(detect));
+        for (int i = 0; i < n_boxes; i++ ){
+            if (all_boxes[i].score > p.pthresh){
+                (*dets)[j++] = all_boxes[i];
+            }
         }
     }
     free(all_boxes);
@@ -439,7 +461,14 @@ void _detect_rnet(network *net, image im, int* n, detect** dets, params p)
 
     // nms
     _nms(*dets, *n, 0.5, 0, p.softnms);
-    int n_boxes = _count_nzero(*dets, *n);
+    int n_boxes = 0;
+
+    if (p.softnms == 0){
+        n_boxes = _count_nzero(*dets, *n);
+    } else {
+        n_boxes = _count_geq_thresh(*dets, *n, p.rthresh);
+    }
+
     if (n_boxes == 0){
         *n = 0;
         *dets = realloc(*dets, 0);
@@ -454,7 +483,11 @@ void _detect_rnet(network *net, image im, int* n, detect** dets, params p)
 
     for (i = 0; i < *n; i++ ){
         float score = tmp[i].score;
-        if (score == 0) continue;
+        if (p.softnms == 0) {
+            if (score == 0) continue;
+        } else {
+            if (score < p.rthresh) continue;
+        }
         (*dets)[j++] = tmp[i];
     }
 
@@ -550,7 +583,14 @@ void _detect_onet(network *net, image im, int* n, detect** dets, params p)
 
     // nms
     _nms(*dets, *n, 0.5, 1, p.softnms);
-    int n_boxes = _count_nzero(*dets, *n);
+
+    int n_boxes = 0;
+    if (p.softnms == 0){
+        n_boxes = _count_nzero(*dets, *n);
+    } else {
+        n_boxes = _count_geq_thresh(*dets, *n, p.rthresh);
+    }
+
     if (n_boxes == 0){
         *n = 0;
         *dets = realloc(*dets, 0);
@@ -565,10 +605,13 @@ void _detect_onet(network *net, image im, int* n, detect** dets, params p)
 
     for (i = 0; i < *n; i++ ){
         float score = tmp[i].score;
-        if (score == 0) continue;
+        if (p.softnms == 0) {
+            if (score == 0) continue;
+        } else {
+            if (score < p.othresh) continue;
+        }
         (*dets)[j++] = tmp[i];
     }
-
     *n = n_boxes;
     free(tmp);
 
