@@ -21,6 +21,7 @@ void run_mtcnn(int argc, char **argv)
         fprintf(stderr, "    --scale    resize factor,  default `0.79`;\n");
         fprintf(stderr, "    --stride                   default `2`;\n");
         fprintf(stderr, "    --cellsize                 default `12`;\n");
+        fprintf(stderr, "    --softnms                  default `0`;\n");
         fprintf(stderr, "\n");
         fprintf(stderr, "Example:\n");
         fprintf(stderr, "    ./mtcnn -v 0\n");
