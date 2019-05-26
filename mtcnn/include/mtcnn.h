@@ -41,6 +41,7 @@ typedef struct params
     float scale;        /* scale factor */
     int stride;         
     int cellsize;       /* size of cell */
+    int softnms;        /* soft-NMS */
 } params;
 
 box bbox_to_box(bbox bbx);

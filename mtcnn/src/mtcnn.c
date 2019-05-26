@@ -73,6 +73,7 @@ params initParams(int argc, char **argv)
     p.scale    = find_float_arg(argc, argv, "--scale", 0.79);
     p.stride   = find_int_arg(argc, argv, "--stride", 2);
     p.cellsize = find_int_arg(argc, argv, "--cellsize", 12);
+    p.softnms  = find_int_arg(argc, argv, "--softnms", 0);
 
     return p;
 }
@@ -108,30 +109,20 @@ void bsort(detect** dets, int n)
     }
 }
 
-void _nms(detect* dets, int n, float thresh, int mode)
+float _f(float x, float sigma, int soft)
 {
-    // DEBUG
-//     float max = 0;
-//     float min = 0;
-//
-//     max = -99999.;
-//     min = 99999.;
-//     for (int i = 0; i < n; i++ ){
-//         float val = dets[i].score;
-//         if (val > max) max = val;
-//         if (val < min) min = val;
-//     }
+    float y = 0;
+    if (soft == 0){
+        y = x < sigma? 1: 0;
+    } else {
+        y = exp(- pow(x, 2) / sigma);
+    }
+    return y;
+}
 
+void _nms(detect* dets, int n, float sigma, int mode, int soft)
+{
     bsort(&dets, n);
-
-     // DEBUG
-//     max = -99999.;
-//     min = 99999.;
-//     for (int i = 0; i < n; i++ ){
-//         float val = dets[i].score;
-//         if (val > max) max = val;
-//         if (val < min) min = val;
-//     }
 
     // do nms
     for (int i = 0; i < n; i++)
@@ -143,9 +134,10 @@ void _nms(detect* dets, int n, float thresh, int mode)
         {
             bbox b = dets[j].bx;
 
-            if (bbox_iou(a, b, mode) > thresh){
-                dets[j].score = 0;
-            }
+            // if (bbox_iou(a, b, mode) > sigma){
+            //     dets[j].score = 0;
+            // }
+            dets[j].score *= _f(bbox_iou(a, b, mode), sigma, soft);
         }
     }
 }
@@ -357,7 +349,7 @@ void _detect_pnet(network *net, image im, int* n, detect** dets, params p)
 #endif
 
     // nms
-    _nms(all_boxes, n_boxes, 0.6, 0);
+    _nms(all_boxes, n_boxes, 0.6, 0, p.softnms);
 
     // keep boxes
     j = 0;
@@ -446,7 +438,7 @@ void _detect_rnet(network *net, image im, int* n, detect** dets, params p)
 #endif
 
     // nms
-    _nms(*dets, *n, 0.5, 0);
+    _nms(*dets, *n, 0.5, 0, p.softnms);
     int n_boxes = _count_nzero(*dets, *n);
     if (n_boxes == 0){
         *n = 0;
@@ -557,7 +549,7 @@ void _detect_onet(network *net, image im, int* n, detect** dets, params p)
 #endif
 
     // nms
-    _nms(*dets, *n, 0.5, 1);
+    _nms(*dets, *n, 0.5, 1, p.softnms);
     int n_boxes = _count_nzero(*dets, *n);
     if (n_boxes == 0){
         *n = 0;
