@@ -10,7 +10,7 @@ build/
 
 # mtcnn/weights
 mtcnn/mtcnn
-mtcnn/weights/
+# mtcnn/weights/
 
 torch_mtcnn/logs
 
