@@ -448,8 +448,8 @@ class MtcnnDetector(object):
         x1, y1, x2, y2, score = np.hsplit(bbox_s, 5)    
         pw = x2 - x1 + 1; ph = y2 - y1 + 1
         pshape = np.hstack([ph, pw, 3*np.ones(shape=(score.shape[0], 1))]).astype('int')   # (n_boxes, 3)
-        keep = np.bitwise_or(pw > 0, ph > 0).reshape(-1)
-        pshape = pshape[keep]; bbox_s = bbox_s[keep]
+        # keep = np.bitwise_or(pw > 0, ph > 0).reshape(-1)
+        # pshape = pshape[keep]; bbox_s = bbox_s[keep]
         n_boxes = bbox_s.shape[0]
 
         x1, y1, x2, y2, xx1, yy1, xx2, yy2 = locate(bbox_s, imh, imw) # (n_boxes, 1)
