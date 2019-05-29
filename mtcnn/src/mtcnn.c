@@ -1,5 +1,5 @@
 #include "mtcnn.h"
-
+#include "image.h"
 
 // ================================================================================== //
 
@@ -637,7 +637,8 @@ void detect_image(network *pnet, network *rnet, network *onet, image im, int* n,
 void show_detect(image im, detect* dets, int n, char* winname, int pause, int showscore, int showbox, int showmark)
 {
     image tmp = copy_image(im);
-#if 0
+#if 1
+    rgbgr_image(tmp);
     IplImage* ipl = image_to_ipl(tmp);
     CvFont font; cvInitFont(&font, CV_FONT_HERSHEY_SIMPLEX, 0.5, 0.5, 1, 2, 8);
 
