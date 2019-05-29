@@ -4,10 +4,11 @@ import numpy as np
 
 from torchstat import stat
 import torch
+import torch.cuda as cuda
 from torchvision.transforms import ToTensor
 
-from model import PNet, RNet, ONet
-from utils import *
+from .model import PNet, RNet, ONet
+from .utils import *
 
 sigmoid = lambda x: 1 / (1 + np.e**(-x))
 
@@ -40,11 +41,16 @@ class MtcnnDetector(object):
         # stat(self.pnet, (3, 12, 12))
         # stat(self.rnet, (3, 24, 24))
         # stat(self.onet, (3, 48, 48))
+        if cuda.is_available():
+            self.pnet.cuda()
+            self.rnet.cuda()
+            self.onet.cuda()
 
     def _load_state(self, net):
         
-        ckpt = './ckptdir/{}.pkl'.format(net._get_name())
+        ckpt = '../torch_mtcnn/ckptdir/{}.pkl'.format(net._get_name())
         if not os.path.exists(ckpt): return
+        print("load state from {}".format(ckpt))
         ckpt = torch.load(ckpt, map_location='cuda' if torch.cuda.is_available() else 'cpu')
         net.load_state_dict(ckpt['net_state'])
     
@@ -119,7 +125,8 @@ class MtcnnDetector(object):
 
             ## forward network
             X = ToTensor()(cur_img).unsqueeze(0)
-            y_pred = self.pnet(X)[0].detach().numpy()
+            if cuda.is_available(): X = X.cuda()
+            y_pred = self.pnet(X)[0].cpu().detach().numpy()
 
             ## generate bbox
             cls_map = sigmoid(y_pred[0,:,:])
@@ -186,7 +193,8 @@ class MtcnnDetector(object):
         
         ## forward network
         X = torch.cat(list(map(lambda x: ToTensor()(x).unsqueeze(0), patches)), dim=0)
-        y_pred = self.rnet(X).detach().numpy()  # (n_boxes, 15)
+        if cuda.is_available(): X = X.cuda()
+        y_pred = self.rnet(X).cpu().detach().numpy()  # (n_boxes, 15)
         scores = sigmoid(y_pred[:, 0])          # (n_boxes,)
         offset = y_pred[:, 1: 5]                # (n_boxes, 4)
         landmark = y_pred[:, 5:]                # (n_boxes, 10)
@@ -236,7 +244,8 @@ class MtcnnDetector(object):
         
         ## forward network
         X = torch.cat(list(map(lambda x: ToTensor()(x).unsqueeze(0), patches)), dim=0)
-        y_pred = self.onet(X).detach().numpy()  # (n_boxes, 15)
+        if cuda.is_available(): X = X.cuda()
+        y_pred = self.onet(X).cpu().detach().numpy()  # (n_boxes, 15)
         scores = sigmoid(y_pred[:, 0])          # (n_boxes,)
         offset = y_pred[:, 1: 5]                # (n_boxes, 4)
         landmark = y_pred[:, 5:]                # (n_boxes, 10)
@@ -438,8 +447,9 @@ class MtcnnDetector(object):
         n_boxes = bbox_s.shape[0]
 
         x1, y1, x2, y2, score = np.hsplit(bbox_s, 5)    
-        pw = x2 - x1 +1; ph = y2 - y1 + 1
-        pshape = np.hstack([ph, pw, 3*np.ones(shape=(score.shape[0], 1))]).astype('int')   # (n_boxes, 2)
+        pw = x2 - x1 + 1; ph = y2 - y1 + 1
+        pshape = np.hstack([ph, pw, 3*np.ones(shape=(score.shape[0], 1))]).astype('int')   # (n_boxes, 3)
+        keep = np.bitwise_or(pw > 0, ph > 0).reshape(-1); pshape = pshape[keep]
 
         x1, y1, x2, y2, xx1, yy1, xx2, yy2 = locate(bbox_s, imh, imw) # (n_boxes, 1)
 
