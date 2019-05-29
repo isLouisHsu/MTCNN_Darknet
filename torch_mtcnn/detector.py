@@ -54,7 +54,10 @@ class MtcnnDetector(object):
             image:    {ndarray(H, W, C)}
         """
 
-        boxes, boxes_c, _ = self._detect_pnet(image)
+        boxes, boxes_c, landmark = self._detect_pnet(image)
+        boxes, boxes_c, landmark = self._detect_rnet(image, boxes_c)
+        boxes, boxes_c, landmark = self._detect_onet(image, boxes_c)
+        return boxes_c, landmark
 
     def _detect_pnet(self, image):
         """
