@@ -7,8 +7,8 @@ import torch
 import torch.cuda as cuda
 from torchvision.transforms import ToTensor
 
-from .model import PNet, RNet, ONet
-from .utils import *
+from model import PNet, RNet, ONet
+from utils import *
 
 sigmoid = lambda x: 1 / (1 + np.e**(-x))
 
@@ -444,19 +444,21 @@ class MtcnnDetector(object):
             return [x1, y1, x2, y2, xx1, yy1, xx2, yy2]
 
         imh, imw, _ = image.shape
-        n_boxes = bbox_s.shape[0]
 
         x1, y1, x2, y2, score = np.hsplit(bbox_s, 5)    
         pw = x2 - x1 + 1; ph = y2 - y1 + 1
         pshape = np.hstack([ph, pw, 3*np.ones(shape=(score.shape[0], 1))]).astype('int')   # (n_boxes, 3)
-        keep = np.bitwise_or(pw > 0, ph > 0).reshape(-1); pshape = pshape[keep]
+        keep = np.bitwise_or(pw > 0, ph > 0).reshape(-1)
+        pshape = pshape[keep]; bbox_s = bbox_s[keep]
+        n_boxes = bbox_s.shape[0]
 
         x1, y1, x2, y2, xx1, yy1, xx2, yy2 = locate(bbox_s, imh, imw) # (n_boxes, 1)
 
         patches = []
         for i_boxes in range(n_boxes):
             patch = np.zeros(shape=pshape[i_boxes], dtype='uint8')
-            patch[yy1[i_boxes]: yy2[i_boxes], xx1[i_boxes]: xx2[i_boxes]] = image[y1[i_boxes]: y2[i_boxes], x1[i_boxes]: x2[i_boxes]]
+            patch[yy1[i_boxes]: yy2[i_boxes], xx1[i_boxes]: xx2[i_boxes]] = \
+                        image[y1[i_boxes]: y2[i_boxes], x1[i_boxes]: x2[i_boxes]]
             patch = cv2.resize(patch, (size, size))
             patches += [patch]
         
