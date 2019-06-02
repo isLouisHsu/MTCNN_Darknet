@@ -49,7 +49,7 @@ void* detect_frame_in_thread(void* ptr)
     image frame = g_imFrame[(g_index + 2) % 3];
     g_dets = realloc(g_dets, 0); g_ndets = 0;
     detect_image(pnet, rnet, onet, frame, &g_ndets, &g_dets, p);
-#if 1
+#if 0
     for (int i = 0; i < g_ndets; i++ ){
         detect det = g_dets[i];
         bbox bx = det.bx;
