@@ -189,16 +189,16 @@ void _cal_landmark(detect* dets, int n)
         float h = box.y2 - box.y1 + 1;
 
         landmark ldmark = dets[i].mk;
-        ldmark.x1 += ldmark.x1*w + box.x1;
-        ldmark.y1 += ldmark.y1*h + box.y1;
-        ldmark.x2 += ldmark.x2*w + box.x1;
-        ldmark.y2 += ldmark.y2*h + box.y1;
-        ldmark.x3 += ldmark.x3*w + box.x1;
-        ldmark.y3 += ldmark.y3*h + box.y1;
-        ldmark.x4 += ldmark.x4*w + box.x1;
-        ldmark.y4 += ldmark.y4*h + box.y1;
-        ldmark.x5 += ldmark.x5*w + box.x1;
-        ldmark.y5 += ldmark.y5*h + box.y1;
+        ldmark.x1 = ldmark.x1*w + box.x1;
+        ldmark.y1 = ldmark.y1*h + box.y1;
+        ldmark.x2 = ldmark.x2*w + box.x1;
+        ldmark.y2 = ldmark.y2*h + box.y1;
+        ldmark.x3 = ldmark.x3*w + box.x1;
+        ldmark.y3 = ldmark.y3*h + box.y1;
+        ldmark.x4 = ldmark.x4*w + box.x1;
+        ldmark.y4 = ldmark.y4*h + box.y1;
+        ldmark.x5 = ldmark.x5*w + box.x1;
+        ldmark.y5 = ldmark.y5*h + box.y1;
 
         dets[i].mk = ldmark;
     }
