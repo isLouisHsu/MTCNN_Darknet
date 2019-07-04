@@ -626,6 +626,7 @@ void _detect_onet(network *net, image im, int* n, detect** dets, params p)
 
 void detect_image(network *pnet, network *rnet, network *onet, image im, int* n, detect** dets, params p)
 {
+    *dets = realloc(*dets, 0); *n = 0;
     image im_rgbgr = copy_image(im);
     rgbgr_image(im_rgbgr);
     _detect_pnet(pnet, im_rgbgr, n, dets, p);
