@@ -29,6 +29,9 @@ cd mtcnn
 ```
 
 ## Prepare Data
+
+See more about [prepare_data](prepare_data/README.md).
+
 1. Origin data
     Download dataset from [WIDER Face](http://mmlab.ie.cuhk.edu.hk/projects/WIDERFace/) and [CNN for Facial Point Detection](http://mmlab.ie.cuhk.edu.hk/archive/CNN_FacePoint.htm)
     1. WIDER Face
@@ -54,17 +57,14 @@ cd mtcnn
 3. Generate data
     Run `prepare_data/main.py`
 
-
 ## Model
 ![mtcnn](/images/mtcnn.png)
-
 
 ## Details
 1. Make training data using pretrained MTCNN;
 1. Train MTCNN using PyTorch;
 1. Convert PyTorch module's weights to fit darknet;
 1. Use `logistic` in classification task instead of `softmax`;
-<!-- 1. `PReLU` is replaced by `ReLU`; -->
 
 ## Reference
 1. Kaipeng Zhang Zhanpeng Zhang Zhifeng Li Yu Qiao  " Joint Face Detection and Alignment using Multi-task Cascaded Convolutional Networks," IEEE Signal Processing Letter
