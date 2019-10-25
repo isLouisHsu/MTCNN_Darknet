@@ -1,15 +1,15 @@
 
 # generate mtcnn weights
-cd mtcnn && mkdir weights
+cd mtcnn_c && mkdir weights
 cd ..
-cd torch_mtcnn
+cd mtcnn_py
 python extract_weights.py
 cd ..
 echo "Weights generated! "
 echo "============================================="
 
 # compile mtcnn
-cd mtcnn
+cd mtcnn_c
 mkdir build
 cd build
 cmake .. && make
