@@ -7,7 +7,7 @@
 #include <opencv2/imgcodecs/imgcodecs_c.h>
 #include <math.h>
 #include "darknet.h"
-#include "list.h"
+#include "list_c.h"
 #include "image.h"
 #include "activations.h"
 #include "util.h"
