@@ -36,7 +36,7 @@ See more about [prepare_data](prepare_data/README.md).
     Download dataset from [WIDER Face](http://mmlab.ie.cuhk.edu.hk/projects/WIDERFace/) and [CNN for Facial Point Detection](http://mmlab.ie.cuhk.edu.hk/archive/CNN_FacePoint.htm)
     1. WIDER Face
         - WIDER_train.zip (*)
-        - WIDER_val.zip
+        - WIDER_val.zip (*)
         - Face annotations.zip
     2. CNN for Facial Point Detection
         - train.zip (*)
@@ -44,18 +44,27 @@ See more about [prepare_data](prepare_data/README.md).
 2. Sort
     ```
     ├── ./data
-    │   ├── WIDER_train
-    │   │    └── images
-    │   │        └── {Occasion}
-    │   │            └── {Occasion}_*.jpg
+    │   ├── WIDER
+    │   │   ├── WIDER_train
+    │   │   │    └── images
+    │   │   │        └── {Occasion}
+    │   │   │            └── {Occasion}_*.jpg
+    │   │   ├── WIDER_val
+    │   │   │    └── images
+    │   │   │        └── {Occasion}
+    │   │   │            └── {Occasion}_*.jpg
+    │   │   ├── wider_face_train_bbx_gt.txt
+    │   │   └── wider_face_val_bbx_gt.txt
     │   └── Align
     │        ├── lfw_5590
-    │        │    └── *.jpg
-    │        └── net_7876
-    │            └── *.jpg
+    │        │   └── *.jpg
+    │        ├── net_7876
+    │        │   └── *.jpg
+    │        ├── trainImageList.txt
+    │        └── testImageList.txt
     ```
 3. Generate data
-    Run `prepare_data/main.py`
+    <!-- Run `prepare_data/main.py` -->
 
 ## Model
 ![mtcnn](/images/mtcnn.png)
