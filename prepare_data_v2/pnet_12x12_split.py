@@ -14,9 +14,9 @@ from config import configer
 
 # 划分数据集
 with open(configer.pAnno[0], 'r') as f:
-    lines = f.readlines()()
+    lines = np.array(f.readlines())
     
-n_samples = len(lines)
+n_samples = lines.shape[0]
 n_train   = int(n_samples * configer.splitratio[0])
 n_valid   = int(n_samples * configer.splitratio[1])
 n_test    = n_samples - n_train - n_valid

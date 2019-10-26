@@ -5,7 +5,7 @@
 @Author: louishsu
 @E-mail: is.louishsu@foxmail.com
 @Date: 2019-10-25 12:25:16
-@LastEditTime: 2019-10-26 09:50:32
+@LastEditTime: 2019-10-26 10:48:41
 @Update: 
 '''
 import os
@@ -15,6 +15,7 @@ from numpy import random as npr
 
 from config import configer
 from utils import iou, show_bbox
+from processbar import ProcessBar
 
 # 创建文件夹保存截取图片
 if not os.path.exists(configer.pImage):
@@ -28,10 +29,12 @@ SAVE_ANNO_FP    = open(configer.pAnno[0], 'w')
 # 读取标注文档
 with open(configer.annotations, 'r') as f:
     annotations = f.readlines()
+BAR = ProcessBar(len(annotations))
 
 # 进行采样
 for annotation in annotations:  # 每张图片进行采样
-    
+    BAR.step()
+     
     # 读取图片
     impath = configer.images + annotation.split('jpg')[0] + 'jpg'
     image  = cv2.imread(impath, cv2.IMREAD_COLOR)
