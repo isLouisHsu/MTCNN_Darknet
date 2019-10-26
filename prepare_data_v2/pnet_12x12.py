@@ -5,7 +5,7 @@
 @Author: louishsu
 @E-mail: is.louishsu@foxmail.com
 @Date: 2019-10-25 12:25:16
-@LastEditTime: 2019-10-25 20:34:23
+@LastEditTime: 2019-10-26 09:50:32
 @Update: 
 '''
 import os
@@ -23,7 +23,7 @@ if not os.path.exists(configer.pImage):
 # 初始化全局变量
 SAVE_CNT = 0                            # 图片保存计数
 SAVE_IMAGE_NAME = configer.pImage + '{:d}.jpg'
-SAVE_ANNO_FP    = open(configer.pAnno, 'w')
+SAVE_ANNO_FP    = open(configer.pAnno[0], 'w')
 
 # 读取标注文档
 with open(configer.annotations, 'r') as f:
@@ -233,8 +233,8 @@ for annotation in annotations:  # 每张图片进行采样
             landmarkf = np.c_[(landmarkgtr[:, 0] - boxr[0]) / sr, (landmarkgtr[:, 1] - boxr[1]) / sr].reshape(-1)
             landmarkf = ' '.join(list(map(str, landmarkf)))
             
-            annor = '{} {} {} {}\n'.\
-                    format(pathr, -2, boxf, landmarkf)
+            annor = '{} {} {}\n'.\
+                    format(pathr, -2, landmarkf)
             SAVE_ANNO_FP.write(annor)
 
             i_landmark += 1
