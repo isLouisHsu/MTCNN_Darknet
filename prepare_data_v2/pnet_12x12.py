@@ -5,7 +5,7 @@
 @Author: louishsu
 @E-mail: is.louishsu@foxmail.com
 @Date: 2019-10-25 12:25:16
-@LastEditTime: 2019-10-26 14:29:04
+@LastEditTime: 2019-10-26 14:29:36
 @Update: 
 '''
 import os
@@ -182,8 +182,7 @@ for i_annotation in range(n_annotation):  # 每张图片进行采样
                     i_pos += 1
                 n_iter = 0
 
-                # print("\rANNO: [{}]/[{}] | BOX GT: [{}]/[{}] | PART: [{}]/[{}] | POS: [{}]/[{}]".\
-                            format(i_annotation, n_annotation, i_boxgt, n_boxgt, i_part, configer.pNums[2], i_pos, configer.pNums[3]))
+                # print("\rANNO: [{}]/[{}] | BOX GT: [{}]/[{}] | PART: [{}]/[{}] | POS: [{}]/[{}]".format(i_annotation, n_annotation, i_boxgt, n_boxgt, i_part, configer.pNums[2], i_pos, configer.pNums[3]))
                     
                 annor = '{} {} {}\n'.format(pathr, label, boxf)
                 SAVE_ANNO_FP.write(annor)
