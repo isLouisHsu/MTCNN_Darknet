@@ -5,7 +5,7 @@
 @Author: louishsu
 @E-mail: is.louishsu@foxmail.com
 @Date: 2019-10-25 12:25:16
-@LastEditTime: 2019-10-26 14:27:43
+@LastEditTime: 2019-10-26 14:29:04
 @Update: 
 '''
 import os
@@ -31,9 +31,12 @@ with open(configer.annotations, 'r') as f:
     annotations = f.readlines()
 n_annotation = len(annotations)
 
+BAR = ProcessBar(n_annotation)
+
 # 进行采样
 for i_annotation in range(n_annotation):  # 每张图片进行采样
-    
+
+    BAR.step(i_annotation) 
     annotation = annotations[i_annotation]
 
     # 读取图片
@@ -72,7 +75,7 @@ for i_annotation in range(n_annotation):  # 每张图片进行采样
                 i_neg += 1
                 SAVE_CNT += 1
 
-                print("\rANNO: [{}]/[{}] | NEG: [{}]/[{}]".format(i_annotation, n_annotation, i_neg, n_neg))
+                # print("\rANNO: [{}]/[{}] | NEG: [{}]/[{}]".format(i_annotation, n_annotation, i_neg, n_neg))
         
         # ----------------------- 对于每个框，在其附近进行采样 -----------------------
         for i_boxgt in range(n_boxgt):
@@ -112,7 +115,7 @@ for i_annotation in range(n_annotation):  # 每张图片进行采样
                     # 计数
                     i_neg += 1
 
-                    print("\rANNO: [{}]/[{}] | BOX GT: [{}]/[{}] | NEG: [{}]/[{}]".\
+                    # print("\rANNO: [{}]/[{}] | BOX GT: [{}]/[{}] | NEG: [{}]/[{}]".\
                             format(i_annotation, n_annotation, i_boxgt, n_boxgt, i_neg, configer.pNums[1]))
 
             # -------------- 附近采样：part,pos 样本 --------------
@@ -179,7 +182,7 @@ for i_annotation in range(n_annotation):  # 每张图片进行采样
                     i_pos += 1
                 n_iter = 0
 
-                print("\rANNO: [{}]/[{}] | BOX GT: [{}]/[{}] | PART: [{}]/[{}] | POS: [{}]/[{}]".\
+                # print("\rANNO: [{}]/[{}] | BOX GT: [{}]/[{}] | PART: [{}]/[{}] | POS: [{}]/[{}]".\
                             format(i_annotation, n_annotation, i_boxgt, n_boxgt, i_part, configer.pNums[2], i_pos, configer.pNums[3]))
                     
                 annor = '{} {} {}\n'.format(pathr, label, boxf)
@@ -261,7 +264,7 @@ for i_annotation in range(n_annotation):  # 每张图片进行采样
 
             i_landmark += 1
 
-            print("\rANNO: [{}]/[{}] | LANDMARK: [{}]/[{}]".format(i_annotation, n_annotation, i_landmark, configer.pNums[4]))
+            # print("\rANNO: [{}]/[{}] | LANDMARK: [{}]/[{}]".format(i_annotation, n_annotation, i_landmark, configer.pNums[4]))
             
             # show_bbox(imager, np.c_[np.r_[np.c_[boxgt, boxr]].T, np.array([1, iour])], landmarkgtr.reshape((1, 10)), show_score=True)
 
