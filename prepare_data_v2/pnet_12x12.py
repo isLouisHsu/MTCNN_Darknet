@@ -130,8 +130,8 @@ for i_annotation in range(n_annotation):  # 每张图片进行采样
                 sl = np.floor(min(wgt, hgt) * 0.8)
                 sh = np.ceil (max(wgt, hgt) * 1.25)
                 sr = npr.randint(sl, sh)      
-                dx = npr.randint(- wgt * 0.2, wgt * 0.2)# 随机偏移
-                dy = npr.randint(- hgt * 0.2, hgt * 0.2)# 随机偏移
+                dx = npr.randint(- wgt * 0.2, wgt * 0.2 + 1)# 随机偏移
+                dy = npr.randint(- hgt * 0.2, hgt * 0.2 + 1)# 随机偏移
 
                 x1r = int(max(0, cxgt + dx - sr / 2))       # 左上角x
                 y1r = int(max(0, cygt + dy - sr / 2))       # 左上角y
@@ -209,8 +209,8 @@ for i_annotation in range(n_annotation):  # 每张图片进行采样
             sl = np.floor(min(wgt, hgt) * 0.80)
             sh = np.ceil (max(wgt, hgt) * 1.25)
             sr = npr.randint(sl, sh)   
-            dx = npr.randint(- wgt * 0.2, wgt * 0.2)    # 随机偏移
-            dy = npr.randint(- hgt * 0.2, hgt * 0.2)    # 随机偏移
+            dx = npr.randint(- wgt * 0.2, wgt * 0.2 + 1)# 随机偏移
+            dy = npr.randint(- hgt * 0.2, hgt * 0.2 + 1)# 随机偏移
             x1r = int(max(0, cxgt + dx - sr / 2))       # 左上角x
             y1r = int(max(0, cygt + dy - sr / 2))       # 左上角y
             x2r, y2r = x1r + sr, y1r + sr               # 右下角坐标
