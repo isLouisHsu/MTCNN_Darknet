@@ -5,7 +5,7 @@
 @Author: louishsu
 @E-mail: is.louishsu@foxmail.com
 @Date: 2019-10-26 10:43:43
-@LastEditTime: 2019-10-26 11:24:49
+@LastEditTime: 2019-10-26 12:36:46
 @Update: 
 '''
 import os
@@ -13,7 +13,7 @@ import cv2
 import time
 import numpy as np
 
-import torch as t
+import torch
 from torch.utils.data   import Dataset, DataLoader
 from torchvision.transforms import ToTensor
 
@@ -26,6 +26,11 @@ def collate_fn(batch):
     offsets   = list(map(lambda x: x[2], batch))
     landmarks = list(map(lambda x: x[3], batch))
     
+    images = torch.from_numpy(images).float()
+    labels = torch.tensor(labels).float()
+    offsets = [torch.tensor(_) for _ in offsets]
+    landmarks = [torch.tensor(_) for _ in landmarks]
+
     return images, labels, offsets, landmarks
 
 class MtcnnData(Dataset):
@@ -40,8 +45,10 @@ class MtcnnData(Dataset):
 
         if save_in_memory:
             self.images_ = list(map(lambda x: cv2.imread(x[0], cv2.IMREAD_COLOR), self.samples_))
+            print("Data loaded!")
         
         self.n_samples = self.samples_.shape[0]
+        self.image_size = [3, imsize, imsize]
 
     def _parse_line(self, line):
 
