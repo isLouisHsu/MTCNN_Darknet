@@ -5,7 +5,7 @@
 @Author: louishsu
 @E-mail: is.louishsu@foxmail.com
 @Date: 2019-10-26 11:43:36
-@LastEditTime: 2019-10-26 12:26:36
+@LastEditTime: 2019-10-26 14:09:36
 @Update: 
 '''
 import os
@@ -28,8 +28,8 @@ class MtcnnTrainer(object):
     """ Train Templet
     """
 
-    def __init__(self, configer, net, params, trainset, validset, criterion, 
-                    optimizer, lr_scheduler, num_to_keep=5, valid_freq=5):
+    def __init__(self, configer, net, params, trainset, validset, testset, criterion, 
+                    optimizer, lr_scheduler, num_to_keep=5, valid_freq=10):
 
         self.configer = configer
         self.valid_freq = valid_freq
@@ -45,8 +45,10 @@ class MtcnnTrainer(object):
         ## datasets
         self.trainset = trainset
         self.validset = validset
-        self.trainloader = DataLoader(trainset, configer.batchsize, True, collate_fn=collate_fn)
-        self.validloader = DataLoader(validset, configer.batchsize, True, collate_fn=collate_fn)
+        self.testset  = testset
+        self.trainloader = DataLoader(trainset, configer.batchsize, True,  collate_fn=collate_fn)
+        self.validloader = DataLoader(validset, configer.batchsize, False, collate_fn=collate_fn)
+        self.testloader  = DataLoader(testset,  configer.batchsize, False, collate_fn=collate_fn)
 
         ## for optimization
         self.criterion = criterion
@@ -129,7 +131,7 @@ class MtcnnTrainer(object):
         start_time = time.time()
         n_batch = len(self.trainset) // self.configer.batchsize
 
-        bar = ProcessBar(n_batch, title='[Train|Epoch %d] ' % self.cur_epoch)
+        bar = ProcessBar(n_batch, title='    [Train|Epoch %d] ' % self.cur_epoch)
         for i_batch, (images, labels, offsets, landmarks) in enumerate(self.trainloader):
             
             bar.step(i_batch)
@@ -143,17 +145,22 @@ class MtcnnTrainer(object):
             
             pred = self.net(images)
             loss_i, loss_cls, loss_offset, loss_landmark = self.criterion(pred, labels, offsets, landmarks)
+            
+            cls_pred = torch.where(torch.sigmoid(pred[:, 0]) > 0.5, torch.ones_like(labels), torch.zeros_like(labels))
+            cls_gt   = torch.where(labels == 1,                     torch.ones_like(labels), torch.zeros_like(labels))
+            acc_i = torch.mean((cls_pred == cls_gt).float())
 
             self.optimizer.zero_grad()
             loss_i.backward()
             self.optimizer.step()
 
-            self.writer.add_scalars('{}/train/'.format(self.net._get_name()), 
-                            {'loss_i': loss_i, 
-                            'loss_cls': loss_cls, 
-                            'loss_offset': loss_offset, 
-                            'loss_landmark': loss_landmark}, 
-                            global_step=self.cur_epoch*n_batch + i_batch)
+            global_step = self.cur_epoch*n_batch + i_batch
+            self.writer.add_scalar('{}/train/loss_i'.format(self.net._get_name()), loss_i, global_step=global_step)
+            self.writer.add_scalar('{}/train/loss_cls'.format(self.net._get_name()), loss_cls, global_step=global_step)
+            self.writer.add_scalar('{}/train/loss_offset'.format(self.net._get_name()), loss_offset, global_step=global_step)
+            self.writer.add_scalar('{}/train/loss_landmark'.format(self.net._get_name()), loss_landmark, global_step=global_step)
+            self.writer.add_scalar('{}/train/acc_i'.format(self.net._get_name()), acc_i, global_step=global_step)
+            
             avg_loss += [loss_i.detach().cpu().numpy()]
 
         avg_loss = np.mean(np.array(avg_loss))
@@ -167,7 +174,7 @@ class MtcnnTrainer(object):
         start_time = time.time()
         n_batch = len(self.validset) // self.configer.batchsize
 
-        bar = ProcessBar(n_batch, title='[Valid|Epoch %d] ' % self.cur_epoch)
+        bar = ProcessBar(n_batch, title='    [Valid|Epoch %d] ' % self.cur_epoch)
         
         with torch.no_grad():
 
@@ -181,20 +188,28 @@ class MtcnnTrainer(object):
                     offsets = [_.cuda() for _ in offsets]
                     landmarks = [_.cuda() for _ in landmarks]
                 
-                y = self.net(images)
-                loss_i, loss_cls, loss_offset, loss_landmark = self.criterion(y, labels, offsets, landmarks)
+                pred = self.net(images)
+                loss_i, loss_cls, loss_offset, loss_landmark = self.criterion(pred, labels, offsets, landmarks)
                 
-                self.writer.add_scalars('{}/valid/'.format(self.net._get_name()), 
-                                {'loss_i': loss_i, 
-                                'loss_cls': loss_cls, 
-                                'loss_offset': loss_offset, 
-                                'loss_landmark': loss_landmark}, 
-                                global_step=self.cur_epoch*n_batch + i_batch)
+                cls_pred = torch.where(torch.sigmoid(pred[:, 0]) > 0.5, torch.ones_like(labels), torch.zeros_like(labels))
+                cls_gt   = torch.where(labels == 1,                     torch.ones_like(labels), torch.zeros_like(labels))
+                acc_i = torch.mean((cls_pred == cls_gt).float())
+
+                global_step = self.cur_epoch*n_batch + i_batch
+                self.writer.add_scalar('{}/valid/loss_i'.format(self.net._get_name()), loss_i, global_step=global_step)
+                self.writer.add_scalar('{}/valid/loss_cls'.format(self.net._get_name()), loss_cls, global_step=global_step)
+                self.writer.add_scalar('{}/valid/loss_offset'.format(self.net._get_name()), loss_offset, global_step=global_step)
+                self.writer.add_scalar('{}/valid/loss_landmark'.format(self.net._get_name()), loss_landmark, global_step=global_step)
+                self.writer.add_scalar('{}/valid/acc_i'.format(self.net._get_name()), acc_i, global_step=global_step)
+            
                 avg_loss += [loss_i.detach().cpu().numpy()]
 
         avg_loss = np.mean(np.array(avg_loss))
         return avg_loss
-    
+
+    def test(self):
+
+        pass
 
     def save_checkpoint(self):
         

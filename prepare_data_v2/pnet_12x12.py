@@ -5,7 +5,7 @@
 @Author: louishsu
 @E-mail: is.louishsu@foxmail.com
 @Date: 2019-10-25 12:25:16
-@LastEditTime: 2019-10-26 10:48:41
+@LastEditTime: 2019-10-26 14:00:48
 @Update: 
 '''
 import os
@@ -29,12 +29,14 @@ SAVE_ANNO_FP    = open(configer.pAnno[0], 'w')
 # 读取标注文档
 with open(configer.annotations, 'r') as f:
     annotations = f.readlines()
-BAR = ProcessBar(len(annotations))
+n_annotation = len(annotations)
 
 # 进行采样
-for annotation in annotations:  # 每张图片进行采样
-    BAR.step()
-     
+for i_annotation in range(n_annotation):  # 每张图片进行采样
+    
+    print("[{}]/[{}]".format(i_annotation, n_annotation))
+    annotation = annotations[i_annotation]
+
     # 读取图片
     impath = configer.images + annotation.split('jpg')[0] + 'jpg'
     image  = cv2.imread(impath, cv2.IMREAD_COLOR)
@@ -51,7 +53,8 @@ for annotation in annotations:  # 每张图片进行采样
         # ----------------------- 依据图片中框的个数进行随机采样 -----------------------
         n_neg, i_neg = configer.pNums[0] * n_boxgt, 0
         while i_neg < n_neg:
-            
+            print("NEG: [{}]/[{}]".format(i_neg, n_neg))
+
             sr = npr.randint(12, min(imH, imW) / 2)                         # 随机尺寸[12, (w + h) / 2)
             x1r, y1r = npr.randint(0, imW - sr), npr.randint(0, imH - sr)   # 左上角坐标
             x2r, y2r = x1r + sr, y1r + sr                                   # 右下角坐标
@@ -72,7 +75,11 @@ for annotation in annotations:  # 每张图片进行采样
                 SAVE_CNT += 1
         
         # ----------------------- 对于每个框，在其附近进行采样 -----------------------
-        for x1gt, y1gt, x2gt, y2gt in boxgts:
+        for i_boxgt in range(n_boxgt):
+
+            x1gt, y1gt, x2gt, y2gt = boxgts[i_boxgt]
+
+            print("BOX GT: [{}]/[{}]".format(i_boxgt, n_boxgt))
             
             wgt, hgt = x2gt - x1gt, y2gt - y1gt                             # 长宽
             if max(wgt, hgt) < configer.sideMin or x1gt < 0 or y1gt < 0:    # 忽略过小的框
@@ -82,6 +89,8 @@ for annotation in annotations:  # 每张图片进行采样
             # -------------- 附近采样：neg样本  --------------
             i_neg = 0
             while i_neg  < configer.pNums[1]:
+
+                print("BOX GT | NEG: [{}]/[{}]".format(i_neg, configer.pNums[1]))
                 
                 sr = npr.randint(12, min(imH, imW) / 2)     # 随机尺寸[12, (w + h) / 2)
                 dx = npr.randint(max(-sr, -x1gt), wgt)      # 随机偏移
@@ -110,6 +119,9 @@ for annotation in annotations:  # 每张图片进行采样
             # -------------- 附近采样：part,pos 样本 --------------
             i_part, i_pos = 0, 0
             while i_part < configer.pNums[2] or i_pos  < configer.pNums[3]:
+
+                print("BOX GT | PART: [{}]/[{}] | POS: [{}]/[{}]".\
+                            format(i_part, configer.pNums[2], i_pos, configer.pNums[3]))
 
                 sl = np.floor(min(wgt, hgt) * 0.8)
                 sh = np.ceil (max(wgt, hgt) * 1.25)
@@ -179,6 +191,8 @@ for annotation in annotations:  # 每张图片进行采样
         
         i_landmark = 0
         while i_landmark < configer.pNums[4]:
+
+            print("LANDMARK: [{}]/[{}]".format(i_landmark, configer.pNums[4]))
 
             imager = image.copy()
             landmarkgtr = landmarkgt.copy()

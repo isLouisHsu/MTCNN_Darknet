@@ -5,7 +5,7 @@
 @Author: louishsu
 @E-mail: is.louishsu@foxmail.com
 @Date: 2019-10-26 11:52:23
-@LastEditTime: 2019-10-26 12:51:15
+@LastEditTime: 2019-10-26 14:08:41
 @Update: 
 '''
 import os
@@ -21,11 +21,12 @@ from model import MtcnnLoss
 from trainer import MtcnnTrainer
 
 net = PNet(); params = net.parameters()
-trainset = MtcnnData(configer.datapath, 12, 'train', save_in_memory=False)
-validset = MtcnnData(configer.datapath, 12, 'valid', save_in_memory=False)
+trainset = MtcnnData(configer.datapath, 12, 'train', save_in_memory=True)
+validset = MtcnnData(configer.datapath, 12, 'valid', save_in_memory=True)
+testset  = MtcnnData(configer.datapath, 12, 'test',  save_in_memory=False)
 criterion = MtcnnLoss(1.0, 0, 0) # TODO:
 optimizer = optim.SGD
 lr_scheduler = lr_scheduler.MultiStepLR
 
-trainer = MtcnnTrainer(configer, net, params, trainset, validset, criterion, optimizer, lr_scheduler)
+trainer = MtcnnTrainer(configer, net, params, trainset, validset, testset, criterion, optimizer, lr_scheduler)
 trainer.train()
