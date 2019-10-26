@@ -5,7 +5,7 @@
 @Author: louishsu
 @E-mail: is.louishsu@foxmail.com
 @Date: 2019-10-25 12:25:16
-@LastEditTime: 2019-10-26 14:00:48
+@LastEditTime: 2019-10-26 14:20:58
 @Update: 
 '''
 import os
@@ -34,7 +34,6 @@ n_annotation = len(annotations)
 # 进行采样
 for i_annotation in range(n_annotation):  # 每张图片进行采样
     
-    print("[{}]/[{}]".format(i_annotation, n_annotation))
     annotation = annotations[i_annotation]
 
     # 读取图片
@@ -53,7 +52,6 @@ for i_annotation in range(n_annotation):  # 每张图片进行采样
         # ----------------------- 依据图片中框的个数进行随机采样 -----------------------
         n_neg, i_neg = configer.pNums[0] * n_boxgt, 0
         while i_neg < n_neg:
-            print("NEG: [{}]/[{}]".format(i_neg, n_neg))
 
             sr = npr.randint(12, min(imH, imW) / 2)                         # 随机尺寸[12, (w + h) / 2)
             x1r, y1r = npr.randint(0, imW - sr), npr.randint(0, imH - sr)   # 左上角坐标
@@ -73,14 +71,14 @@ for i_annotation in range(n_annotation):  # 每张图片进行采样
                 # 计数
                 i_neg += 1
                 SAVE_CNT += 1
+
+                print("ANNO: [{}]/[{}] | NEG: [{}]/[{}]".format(i_annotation, n_annotation, i_neg, n_neg))
         
         # ----------------------- 对于每个框，在其附近进行采样 -----------------------
         for i_boxgt in range(n_boxgt):
 
             x1gt, y1gt, x2gt, y2gt = boxgts[i_boxgt]
 
-            print("BOX GT: [{}]/[{}]".format(i_boxgt, n_boxgt))
-            
             wgt, hgt = x2gt - x1gt, y2gt - y1gt                             # 长宽
             if max(wgt, hgt) < configer.sideMin or x1gt < 0 or y1gt < 0:    # 忽略过小的框
                 continue
@@ -89,8 +87,6 @@ for i_annotation in range(n_annotation):  # 每张图片进行采样
             # -------------- 附近采样：neg样本  --------------
             i_neg = 0
             while i_neg  < configer.pNums[1]:
-
-                print("BOX GT | NEG: [{}]/[{}]".format(i_neg, configer.pNums[1]))
                 
                 sr = npr.randint(12, min(imH, imW) / 2)     # 随机尺寸[12, (w + h) / 2)
                 dx = npr.randint(max(-sr, -x1gt), wgt)      # 随机偏移
@@ -116,12 +112,15 @@ for i_annotation in range(n_annotation):  # 每张图片进行采样
                     # 计数
                     i_neg += 1
 
-            # -------------- 附近采样：part,pos 样本 --------------
-            i_part, i_pos = 0, 0
-            while i_part < configer.pNums[2] or i_pos  < configer.pNums[3]:
+                    print("ANNO: [{}]/[{}] | BOX GT: [{}]/[{}] | NEG: [{}]/[{}]".\
+                            format(i_annotation, n_annotation, i_boxgt, n_boxgt, i_neg, configer.pNums[1]))
 
-                print("BOX GT | PART: [{}]/[{}] | POS: [{}]/[{}]".\
-                            format(i_part, configer.pNums[2], i_pos, configer.pNums[3]))
+            # -------------- 附近采样：part,pos 样本 --------------
+            i_part, i_pos, n_iter = 0, 0, 0
+            while i_part < configer.pNums[2] or i_pos  < configer.pNums[3]:
+                
+                if n_iter > 5*(configer.pNums[2] + configer.pNums[3]):
+                    break
 
                 sl = np.floor(min(wgt, hgt) * 0.8)
                 sh = np.ceil (max(wgt, hgt) * 1.25)
@@ -167,13 +166,19 @@ for i_annotation in range(n_annotation):  # 每张图片进行采样
                 if iour < configer.iouThresh[2]:            # `part`样本
                     label = configer.label['part']
                     if i_part > configer.pNums[2]:
+                        n_iter += 1
                         continue
                     i_part += 1
                 elif iour > configer.iouThresh[2]:          # `pos`样本
                     label = configer.label['pos']
                     if i_pos > configer.pNums[3]:
+                        n_iter += 1
                         continue
                     i_pos += 1
+                n_iter = 0
+
+                print("ANNO: [{}]/[{}] | BOX GT: [{}]/[{}] | PART: [{}]/[{}] | POS: [{}]/[{}]".\
+                            format(i_annotation, n_annotation, i_boxgt, n_boxgt, i_part, configer.pNums[2], i_pos, configer.pNums[3]))
                     
                 annor = '{} {} {}\n'.format(pathr, label, boxf)
                 SAVE_ANNO_FP.write(annor)
@@ -191,8 +196,6 @@ for i_annotation in range(n_annotation):  # 每张图片进行采样
         
         i_landmark = 0
         while i_landmark < configer.pNums[4]:
-
-            print("LANDMARK: [{}]/[{}]".format(i_landmark, configer.pNums[4]))
 
             imager = image.copy()
             landmarkgtr = landmarkgt.copy()
@@ -255,6 +258,8 @@ for i_annotation in range(n_annotation):  # 每张图片进行采样
             SAVE_ANNO_FP.write(annor)
 
             i_landmark += 1
+
+            print("ANNO: [{}]/[{}] | LANDMARK: [{}]/[{}]".format(i_annotation, n_annotation, i_landmark, configer.pNums[4]))
             
             # show_bbox(imager, np.c_[np.r_[np.c_[boxgt, boxr]].T, np.array([1, iour])], landmarkgtr.reshape((1, 10)), show_score=True)
 
