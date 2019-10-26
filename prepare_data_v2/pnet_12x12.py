@@ -5,7 +5,7 @@
 @Author: louishsu
 @E-mail: is.louishsu@foxmail.com
 @Date: 2019-10-25 12:25:16
-@LastEditTime: 2019-10-26 14:20:58
+@LastEditTime: 2019-10-26 14:26:20
 @Update: 
 '''
 import os
@@ -132,6 +132,7 @@ for i_annotation in range(n_annotation):  # 每张图片进行采样
                 y1r = int(max(0, cygt + dy - sr / 2))       # 左上角y
                 x2r, y2r = x1r + sr, y1r + sr               # 右下角坐标
                 if x2r > imW or y2r > imH:
+                    n_iter += 1
                     continue
 
                 boxr = np.array([x1r, y1r, x2r, y2r])       # 随机框
@@ -139,6 +140,7 @@ for i_annotation in range(n_annotation):  # 每张图片进行采样
                 iour = iou(boxr, boxgt.reshape(1, -1))      # 计算与真实框的IoU
 
                 if iour < configer.iouThresh[1]:            # `neg`样本，舍去
+                    n_iter += 1
                     continue
             
                 # 保存图片
