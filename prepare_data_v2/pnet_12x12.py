@@ -5,7 +5,7 @@
 @Author: louishsu
 @E-mail: is.louishsu@foxmail.com
 @Date: 2019-10-25 12:25:16
-@LastEditTime: 2019-10-26 15:48:42
+@LastEditTime: 2019-10-26 16:06:45
 @Update: 
 '''
 import os
@@ -82,7 +82,7 @@ for i_annotation in range(n_annotation):  # 每张图片进行采样
 
             x1gt, y1gt, x2gt, y2gt = boxgts[i_boxgt]
 
-            if x1gt > x2gt or y1gt > y2gt:
+            if x1gt >= x2gt or y1gt >= y2gt:
                 continue
 
             wgt, hgt = x2gt - x1gt, y2gt - y1gt                             # 长宽
