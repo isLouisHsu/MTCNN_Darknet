@@ -5,7 +5,7 @@
 @Author: louishsu
 @E-mail: is.louishsu@foxmail.com
 @Date: 2019-10-25 12:25:16
-@LastEditTime: 2019-10-26 14:29:36
+@LastEditTime: 2019-10-26 14:30:18
 @Update: 
 '''
 import os
@@ -115,8 +115,7 @@ for i_annotation in range(n_annotation):  # 每张图片进行采样
                     # 计数
                     i_neg += 1
 
-                    # print("\rANNO: [{}]/[{}] | BOX GT: [{}]/[{}] | NEG: [{}]/[{}]".\
-                            format(i_annotation, n_annotation, i_boxgt, n_boxgt, i_neg, configer.pNums[1]))
+                    # print("\rANNO: [{}]/[{}] | BOX GT: [{}]/[{}] | NEG: [{}]/[{}]".format(i_annotation, n_annotation, i_boxgt, n_boxgt, i_neg, configer.pNums[1]))
 
             # -------------- 附近采样：part,pos 样本 --------------
             i_part, i_pos, n_iter = 0, 0, 0
