@@ -48,7 +48,13 @@ for i_annotation in range(n_annotation):  # 每张图片进行采样
     if settype == 'WIDER':        # 来自`WIDER FACE`，无关键点
 
         boxgts = annotation.split('jpg')[-1].strip().split(' ')
-        boxgts = np.array(list(map(int, boxgts))).reshape(-1, 4)        # x1, y1,  w,  h
+        
+        try:
+            boxgts = np.array(list(map(int, boxgts))).reshape(-1, 4)        # x1, y1,  w,  h
+        except:
+            print(boxgts)
+            continue
+
         boxgts[:, 2] += boxgts[:, 0]; boxgts[:, 3] += boxgts[:, 1]      # x1, y1, x2, y2
         n_boxgt = boxgts.shape[0]
 
