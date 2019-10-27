@@ -5,7 +5,7 @@
 @Author: louishsu
 @E-mail: is.louishsu@foxmail.com
 @Date: 2019-10-26 10:43:04
-@LastEditTime: 2019-10-26 12:20:01
+@LastEditTime: 2019-10-27 09:48:47
 @Update: 
 '''
 from easydict import EasyDict
@@ -16,11 +16,11 @@ configer.datapath = '../data/'
 configer.logdir = './logs/'
 configer.ckptdir = './ckptdir/'
 
-configer.batchsize = 8 # TODO:
-configer.n_epoch = 1000
+configer.batchsize = 2**9
+configer.n_epoch = 200
 
-configer.lrbase = 1e-3
-configer.adjstep = [750, 900]
+configer.lrbase = 1e-4
+configer.adjstep = [200]
 configer.gamma = 1e-1
 
 configer.cuda = True
