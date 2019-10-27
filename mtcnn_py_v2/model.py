@@ -5,7 +5,7 @@
 @Author: louishsu
 @E-mail: is.louishsu@foxmail.com
 @Date: 2019-10-26 11:26:49
-@LastEditTime: 2019-10-26 12:51:03
+@LastEditTime: 2019-10-27 12:02:06
 @Update: 
 '''
 import torch
@@ -207,7 +207,7 @@ class MtcnnLoss(nn.Module):
         if idx.sum() == 0:
             loss_landmark = 0
         else:
-            landmark_pred = pred[idx, 1: 5]
+            landmark_pred = pred[idx, 5:]
             landmark_gt   = torch.stack([landmarks[i] for i in range(n_samples) if idx[i] == 1], dim=0)
             loss_landmark = torch.mean(self.mse(landmark_pred, landmark_gt), dim=1)
             n_keep = int(self.ohem * loss_landmark.shape[0])
