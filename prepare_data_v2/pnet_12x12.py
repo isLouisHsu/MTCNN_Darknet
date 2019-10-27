@@ -5,7 +5,7 @@
 @Author: louishsu
 @E-mail: is.louishsu@foxmail.com
 @Date: 2019-10-25 12:25:16
-@LastEditTime: 2019-10-26 16:06:45
+@LastEditTime: 2019-10-27 09:42:54
 @Update: 
 '''
 import os
@@ -276,3 +276,28 @@ for i_annotation in range(n_annotation):  # 每张图片进行采样
             # show_bbox(imager, np.c_[np.r_[np.c_[boxgt, boxr]].T, np.array([1, iour])], landmarkgtr.reshape((1, 10)), show_score=True)
 
 SAVE_ANNO_FP.close()
+
+# 划分数据集
+with open(configer.pAnno[0], 'r') as f:
+    lines = np.array(f.readlines())
+    
+n_samples = lines.shape[0]
+n_train   = int(n_samples * configer.splitratio[0])
+n_valid   = int(n_samples * configer.splitratio[1])
+n_test    = n_samples - n_train - n_valid
+idx       = np.arange(n_samples)
+idx_train = npr.choice(idx, n_train)
+idx_valid_test = list(filter(lambda x: x not in idx_train, idx))
+idx_valid = npr.choice(idx_valid_test, n_valid)
+idx_test  = list(filter(lambda x: x not in idx_valid, idx_valid_test))
+
+print("Train: {} | Valid: {} | Test: {} || {}: {}: {}".\
+            format(n_train, n_valid, n_test, 
+                    n_train / n_samples, n_valid / n_samples, n_test / n_samples))
+
+with open(configer.pAnno[1], 'w') as f:
+    f.writelines(lines[idx_train])
+with open(configer.pAnno[2], 'w') as f:
+    f.writelines(lines[idx_valid])
+with open(configer.pAnno[3], 'w') as f:
+    f.writelines(lines[idx_test])
