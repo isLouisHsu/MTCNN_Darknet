@@ -5,7 +5,7 @@
 @Author: louishsu
 @E-mail: is.louishsu@foxmail.com
 @Date: 2019-10-26 11:25:12
-@LastEditTime: 2019-10-26 11:25:13
+@LastEditTime: 2019-10-29 11:15:41
 @Update: 
 '''
 import os
@@ -539,8 +539,8 @@ def main():
     
     detector = MtcnnDetector(min_face=12, thresh=[0.8, 0.6, 0.7], scale=0.79, stride=2, cellsize=12)
     
-    imgfile = sys.argv[1]
-    # imgfile = "../images/test.jpg"
+    # imgfile = sys.argv[1]
+    imgfile = "../images/test.jpg"
 
     image = cv2.imread(imgfile)
     
