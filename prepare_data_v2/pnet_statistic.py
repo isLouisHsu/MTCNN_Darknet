@@ -5,7 +5,7 @@
 @Author: louishsu
 @E-mail: is.louishsu@foxmail.com
 @Date: 2019-10-25 12:40:40
-@LastEditTime: 2019-10-29 11:26:13
+@LastEditTime: 2019-10-29 11:31:43
 @Update: 
 '''
 import os
@@ -27,6 +27,6 @@ print("Pos({}): Neg({}): Part({}): Landmark({}) = {}: {}: {}: {}".\
         format(configer.label['neg'], configer.label['part'], configer.label['landmark'], configer.label['pos'],
                 n_pos / n_images, n_neg / n_images, n_part / n_images, n_landmark / n_images))
 
-print("Cls | P / N = {}".format(n_pos / (n_images - n_pos)))
-print("Offset | n / N = {}".format((n_pos + n_part) / n_images))
-print("Landmark | P / N = {}".format(n_landmark / n_images))
+print("Cls | Pos / Neg = {}".format((n_pos + n_landmark) / (n_images - n_pos - n_landmark)))
+print("Offset | n_offset / n_samples = {}".format((n_pos + n_part) / n_images))
+print("Landmark | n_landmark / n_samples = {}".format(n_landmark / n_images))
