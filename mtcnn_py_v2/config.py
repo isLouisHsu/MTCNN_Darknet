@@ -5,7 +5,7 @@
 @Author: louishsu
 @E-mail: is.louishsu@foxmail.com
 @Date: 2019-10-26 10:43:04
-@LastEditTime: 2019-10-27 11:44:38
+@LastEditTime: 2019-10-29 11:55:58
 @Update: 
 '''
 from easydict import EasyDict
@@ -17,10 +17,10 @@ configer.logdir = './logs/'
 configer.ckptdir = './ckptdir/'
 
 configer.batchsize = 2**12
-configer.n_epoch = 250
+configer.n_epoch = 500
 
-configer.lrbase = 5e-4
-configer.adjstep = [200,]
+configer.lrbase = 1e-3
+configer.adjstep = [100, 400]
 configer.gamma = 1e-1
 
 configer.cuda = True
