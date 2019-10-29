@@ -20,11 +20,14 @@ from model import PNet
 from model import MtcnnLoss
 from trainer import MtcnnTrainer
 
-net = PNet(); params = net.parameters()
+net = PNet()
+state = torch.load('ckptdir/PNet_0014.pkl', map_location='cpu')['net_state']; net.load_state_dict(state)
+
+params = net.parameters()
 trainset = MtcnnData(configer.datapath, 12, 'train', save_in_memory=False)
 validset = MtcnnData(configer.datapath, 12, 'valid', save_in_memory=False)
 testset  = MtcnnData(configer.datapath, 12, 'test',  save_in_memory=False)
-criterion = MtcnnLoss(1.0, 0, 0) # TODO:
+criterion = MtcnnLoss(1.0, 5.0, 5.0) # TODO:
 optimizer = optim.SGD
 lr_scheduler = lr_scheduler.MultiStepLR
 

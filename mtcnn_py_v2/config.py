@@ -16,11 +16,11 @@ configer.datapath = '../data/'
 configer.logdir = './logs/'
 configer.ckptdir = './ckptdir/'
 
-configer.batchsize = 2**9
-configer.n_epoch = 200
+configer.batchsize = 2**12
+configer.n_epoch = 250
 
-configer.lrbase = 1e-4
-configer.adjstep = [200]
+configer.lrbase = 5e-4
+configer.adjstep = [200,]
 configer.gamma = 1e-1
 
 configer.cuda = True
