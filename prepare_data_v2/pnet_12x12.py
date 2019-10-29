@@ -5,7 +5,7 @@
 @Author: louishsu
 @E-mail: is.louishsu@foxmail.com
 @Date: 2019-10-25 12:25:16
-@LastEditTime: 2019-10-27 09:42:54
+@LastEditTime: 2019-10-29 11:38:24
 @Update: 
 '''
 import os
@@ -242,7 +242,7 @@ for i_annotation in range(n_annotation):  # 每张图片进行采样
                 landmarkgtr[[3, 4]] = landmarkgtr[[4, 3]]
 
             # 旋转
-            alphar = npr.randint(-10, 10)
+            alphar = npr.randint(-15, 15)
             M = cv2.getRotationMatrix2D((cxr, cyr), alphar, 1)
             imager = cv2.warpAffine(imager, M, imager.shape[:2][::-1])
             landmarkgtr = np.c_[landmarkgtr, np.ones(5)].dot(M.T)
