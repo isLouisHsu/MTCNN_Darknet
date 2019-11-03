@@ -20,7 +20,7 @@ configer.batchsize = 2**12
 configer.n_epoch = 500
 
 configer.lrbase = 1e-3
-configer.adjstep = [100, 400]
+configer.adjstep = [500,]
 configer.gamma = 1e-1
 
 configer.cuda = True
