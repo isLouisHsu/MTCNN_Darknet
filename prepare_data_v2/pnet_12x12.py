@@ -5,7 +5,7 @@
 @Author: louishsu
 @E-mail: is.louishsu@foxmail.com
 @Date: 2019-10-25 12:25:16
-@LastEditTime: 2019-11-03 21:07:55
+@LastEditTime: 2019-11-03 21:13:56
 @Update: 
 '''
 import os
@@ -245,6 +245,7 @@ for i_annotation in range(n_annotation):  # 每张图片进行采样
                 if iour < configer.iouThresh[2]:            # `part`样本
                     label = configer.label['part']
                     i_part += 1
+                else: n_iter += 1
                 n_iter = 0
                 
             # -------------- 附近采样：pos 样本 --------------
@@ -300,6 +301,7 @@ for i_annotation in range(n_annotation):  # 每张图片进行采样
                 if iour > configer.iouThresh[2]:          # `pos`样本
                     label = configer.label['pos']
                     i_pos += 1
+                else: n_iter += 1
                 n_iter = 0
 
                 # print("\rANNO: [{}]/[{}] | BOX GT: [{}]/[{}] | PART: [{}]/[{}] | POS: [{}]/[{}]".format(i_annotation, n_annotation, i_boxgt, n_boxgt, i_part, configer.pNums[2], i_pos, configer.pNums[3]))
