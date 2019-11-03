@@ -5,7 +5,7 @@
 @Author: louishsu
 @E-mail: is.louishsu@foxmail.com
 @Date: 2019-10-25 12:40:40
-@LastEditTime: 2019-10-29 11:31:43
+@LastEditTime: 2019-11-03 18:06:27
 @Update: 
 '''
 import os
@@ -24,9 +24,9 @@ n_part = types[types == configer.label['part']].shape[0]
 n_landmark = types[types == configer.label['landmark']].shape[0]
 
 print("Pos({}): Neg({}): Part({}): Landmark({}) = {}: {}: {}: {}".\
-        format(configer.label['neg'], configer.label['part'], configer.label['landmark'], configer.label['pos'],
+        format(configer.label['pos'], configer.label['neg'], configer.label['part'], configer.label['landmark'],
                 n_pos / n_images, n_neg / n_images, n_part / n_images, n_landmark / n_images))
 
-print("Cls | Pos / Neg = {}".format((n_pos + n_landmark) / (n_images - n_pos - n_landmark)))
-print("Offset | n_offset / n_samples = {}".format((n_pos + n_part) / n_images))
-print("Landmark | n_landmark / n_samples = {}".format(n_landmark / n_images))
+print("Cls      | Pos({}): Neg({}) = {}".format(configer.label['pos'], configer.label['neg'], n_pos / n_neg))
+print("Offset   | [Pos({}) + Part({})] : n_samples = {}".format(configer.label['pos'], configer.label['part'], (n_pos + n_part) / n_images))
+print("Landmark | Landmark({})         : n_samples = {}".format(configer.label['landmark'], n_landmark / n_images))
