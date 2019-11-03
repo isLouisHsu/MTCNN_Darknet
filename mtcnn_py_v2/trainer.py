@@ -5,7 +5,7 @@
 @Author: louishsu
 @E-mail: is.louishsu@foxmail.com
 @Date: 2019-10-26 11:43:36
-@LastEditTime: 2019-11-03 19:04:35
+@LastEditTime: 2019-11-03 19:14:45
 @Update: 
 '''
 import os
@@ -146,11 +146,11 @@ class MtcnnTrainer(object):
             pred = self.net(images)
             loss_i, loss_cls, loss_offset, loss_landmark = self.criterion(pred, labels, offsets, landmarks)
             
-            cls_pred = torch.where(torch.sigmoid(pred[:, 0]) > 0.5, torch.ones_like(labels), torch.zeros_like(labels))
+            cls_pred = torch.where(torch.sigmoid(pred[:, 0].squeeze()) > 0.5, torch.ones_like(labels), torch.zeros_like(labels))
             cls_gt   = torch.where((labels == 1)^(labels == -2),    torch.ones_like(labels), torch.zeros_like(labels))
             mask     = labels >= 0
             cls_pred = torch.masked_select(cls_pred, mask)
-            cls_gt   = torch.masked_select(cls_gt, mask)
+            cls_gt   = torch.masked_select(cls_gt,   mask)
             acc_i = torch.mean((cls_pred == cls_gt).float())
 
             self.optimizer.zero_grad()
@@ -194,7 +194,7 @@ class MtcnnTrainer(object):
                 pred = self.net(images)
                 loss_i, loss_cls, loss_offset, loss_landmark = self.criterion(pred, labels, offsets, landmarks)
                 
-                cls_pred = torch.where(torch.sigmoid(pred[:, 0]) > 0.5, torch.ones_like(labels), torch.zeros_like(labels))
+                cls_pred = torch.where(torch.sigmoid(pred[:, 0].squeeze()) > 0.5, torch.ones_like(labels), torch.zeros_like(labels))
                 cls_gt   = torch.where((labels == 1)^(labels == -2),    torch.ones_like(labels), torch.zeros_like(labels))
                 mask     = labels >= 0
                 cls_pred = torch.masked_select(cls_pred, mask)
