@@ -29,7 +29,7 @@ class MtcnnTrainer(object):
     """
 
     def __init__(self, configer, net, params, trainset, validset, testset, criterion, 
-                    optimizer, lr_scheduler, num_to_keep=5, valid_freq=10):
+                    optimizer, lr_scheduler, num_to_keep=5, valid_freq=1):
 
         self.configer = configer
         self.valid_freq = valid_freq
