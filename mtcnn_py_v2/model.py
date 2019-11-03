@@ -5,7 +5,7 @@
 @Author: louishsu
 @E-mail: is.louishsu@foxmail.com
 @Date: 2019-10-26 11:26:49
-@LastEditTime: 2019-10-29 11:34:49
+@LastEditTime: 2019-11-03 18:17:55
 @Update: 
 '''
 import torch
@@ -188,6 +188,10 @@ class MtcnnLoss(nn.Module):
         cls_pred = torch.sigmoid(pred[:, 0])
         cls_gt   = torch.where((labels == 1)^(labels == -2), 
                                 torch.ones_like(labels), torch.zeros_like(labels))
+        # mask     = labels >= 0
+        # cls_pred = torch.masked_select(cls_pred, mask)
+        # cls_gt   = torch.masked_select(cls_gt, mask)
+        
         loss_cls = self.bce(cls_pred, cls_gt)
         n_keep = int(self.ohem * loss_cls.shape[0])
         loss_cls = torch.mean(torch.topk(loss_cls, n_keep)[0])
