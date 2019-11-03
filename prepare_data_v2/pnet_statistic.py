@@ -5,7 +5,7 @@
 @Author: louishsu
 @E-mail: is.louishsu@foxmail.com
 @Date: 2019-10-25 12:40:40
-@LastEditTime: 2019-11-03 18:06:27
+@LastEditTime: 2019-11-03 20:20:42
 @Update: 
 '''
 import os
@@ -23,6 +23,7 @@ n_neg = types[types ==  configer.label['neg']].shape[0]
 n_part = types[types == configer.label['part']].shape[0]
 n_landmark = types[types == configer.label['landmark']].shape[0]
 
+print("Totally {} images".format(n_images))
 print("Pos({}): Neg({}): Part({}): Landmark({}) = {}: {}: {}: {}".\
         format(configer.label['pos'], configer.label['neg'], configer.label['part'], configer.label['landmark'],
                 n_pos / n_images, n_neg / n_images, n_part / n_images, n_landmark / n_images))

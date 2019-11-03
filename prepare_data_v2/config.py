@@ -5,7 +5,7 @@
 @Author: louishsu
 @E-mail: is.louishsu@foxmail.com
 @Date: 2019-10-25 11:06:37
-@LastEditTime: 2019-10-29 11:41:31
+@LastEditTime: 2019-11-03 20:19:52
 @Update: 
 '''
 from easydict import EasyDict
@@ -17,7 +17,7 @@ configer.annotations = '../data/annotations.txt'
 
 configer.splitratio = [0.6, 0.15, 0.25]       # 训练：验证：测试
 configer.augment   = True
-configer.sideMin   = 20                     # min(w, h) < minSide 的框被忽略
+configer.sideMin   = 40                     # min(w, h) < minSide 的框被忽略
 configer.iouThresh = [0.3, 0.4, 0.65]       # 分别为 neg, part, pos 阈值
 configer.label     = {'neg': 0, 'pos': 1, 'part': -1, 'landmark': -2}
 

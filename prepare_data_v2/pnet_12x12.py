@@ -5,7 +5,7 @@
 @Author: louishsu
 @E-mail: is.louishsu@foxmail.com
 @Date: 2019-10-25 12:25:16
-@LastEditTime: 2019-10-29 11:38:24
+@LastEditTime: 2019-11-03 20:19:44
 @Update: 
 '''
 import os
@@ -92,7 +92,9 @@ for i_annotation in range(n_annotation):  # 每张图片进行采样
                 continue
 
             wgt, hgt = x2gt - x1gt, y2gt - y1gt                             # 长宽
-            if max(wgt, hgt) < configer.sideMin or x1gt < 0 or y1gt < 0:    # 忽略过小的框
+            if max(wgt, hgt) < configer.sideMin or \
+                min(wgt, hgt) < 0 or \
+                x1gt < 0 or y1gt < 0 or x2gt > wgt or y2gt > hgt:           # 忽略过小的框
                 continue
             cxgt, cygt = (x1gt + x2gt) / 2, (y1gt + y2gt) / 2               # 中心
             
