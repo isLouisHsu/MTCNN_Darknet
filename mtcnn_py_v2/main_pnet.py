@@ -5,7 +5,7 @@
 @Author: louishsu
 @E-mail: is.louishsu@foxmail.com
 @Date: 2019-10-26 11:52:23
-@LastEditTime: 2019-11-03 18:18:39
+@LastEditTime: 2019-11-03 20:05:38
 @Update: 
 '''
 import os
@@ -17,7 +17,7 @@ from torch.optim import lr_scheduler
 from config import configer
 from dataset import MtcnnData
 from model import PNet
-from model import MtcnnLoss
+from model import MtcnnLoss, LossFn
 from trainer import MtcnnTrainer
 
 net = PNet()
@@ -27,7 +27,8 @@ params = net.parameters()
 trainset = MtcnnData(configer.datapath, 12, 'train', save_in_memory=False)
 validset = MtcnnData(configer.datapath, 12, 'valid', save_in_memory=False)
 testset  = MtcnnData(configer.datapath, 12, 'test',  save_in_memory=False)
-criterion = MtcnnLoss(1.0, 0.5, 0.0)
+# criterion = MtcnnLoss(1.0, 0.5, 0.0)
+criterion = LossFn(1.0, 0.5, 0.0)
 optimizer = optim.SGD
 lr_scheduler = lr_scheduler.MultiStepLR
 
