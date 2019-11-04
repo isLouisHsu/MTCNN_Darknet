@@ -5,7 +5,7 @@
 @Author: louishsu
 @E-mail: is.louishsu@foxmail.com
 @Date: 2019-10-26 10:43:04
-@LastEditTime: 2019-11-03 18:09:43
+@LastEditTime: 2019-11-04 16:18:38
 @Update: 
 '''
 from easydict import EasyDict
@@ -16,7 +16,7 @@ configer.datapath = '../data/'
 configer.logdir = './logs/'
 configer.ckptdir = './ckptdir/'
 
-configer.batchsize = 512
+configer.batchsize = 32
 configer.n_epoch = 20
 
 configer.lrbase = 1e-2

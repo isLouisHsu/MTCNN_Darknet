@@ -5,7 +5,7 @@
 @Author: louishsu
 @E-mail: is.louishsu@foxmail.com
 @Date: 2019-10-25 12:25:16
-@LastEditTime: 2019-11-04 12:19:25
+@LastEditTime: 2019-11-04 19:47:33
 @Update: 
 '''
 import os
@@ -38,6 +38,8 @@ n_annotation = len(annotations)
 # 进行采样
 for i_annotation in range(n_annotation):  # 每张图片进行采样
 
+    print(FACE_CNT, FACE_USED_CNT)
+
     # BAR.step(i_annotation) 
     annotation = annotations[i_annotation]
 
@@ -57,10 +59,19 @@ for i_annotation in range(n_annotation):  # 每张图片进行采样
             print(boxgts)
             continue
 
-        boxgts[:, 2] += boxgts[:, 0]; boxgts[:, 3] += boxgts[:, 1]          # x1, y1, x2, y2
         n_boxgt = boxgts.shape[0]
-
         FACE_CNT += n_boxgt
+
+        # 滤除小框
+        index = np.max(boxgts[:, 2:], axis=1) > configer.sideMin
+        boxgts = boxgts[index]
+        n_boxgt = boxgts.shape[0]
+        FACE_USED_CNT += n_boxgt
+
+        if n_boxgt == 0:
+            continue
+        
+        boxgts[:, 2] += boxgts[:, 0]; boxgts[:, 3] += boxgts[:, 1]          # x1, y1, x2, y2
 
         # ----------------------- 依据图片中框的个数进行随机采样 -----------------------
         n_neg, i_neg = configer.pNums[0] * n_boxgt, 0
@@ -102,8 +113,6 @@ for i_annotation in range(n_annotation):  # 每张图片进行采样
                 continue
             cxgt, cygt = (x1gt + x2gt) / 2, (y1gt + y2gt) / 2               # 中心
 
-            FACE_USED_CNT += 1
-            
             # -------------- 附近采样：neg样本  --------------
             i_neg = 0
             while i_neg  < configer.pNums[1]:
@@ -284,8 +293,6 @@ for i_annotation in range(n_annotation):  # 每张图片进行采样
             if x2r > imW or y2r > imH:
                 continue
             
-            FACE_USED_CNT += 1
-
             boxr = np.array([x1r, y1r, x2r, y2r])       # 随机框
             boxgt = np.array([x1gt, y1gt, x2gt, y2gt])  # 真实框
             iour = iou(boxr, boxgt.reshape(1, -1))      # 计算与真实框的IoU
@@ -293,7 +300,7 @@ for i_annotation in range(n_annotation):  # 每张图片进行采样
             if iour < configer.iouThresh[2]:            # 非`pos`样本，舍去
                 continue
 
-            FACE_CNT += 1
+            FACE_USED_CNT += 1
             
             # 水平翻转
             if configer.augment and npr.rand() > 0.5:
