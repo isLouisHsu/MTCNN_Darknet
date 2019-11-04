@@ -5,7 +5,7 @@
 @Author: louishsu
 @E-mail: is.louishsu@foxmail.com
 @Date: 2019-10-25 12:25:16
-@LastEditTime: 2019-11-04 19:47:33
+@LastEditTime: 2019-11-04 20:30:58
 @Update: 
 '''
 import os
@@ -64,13 +64,6 @@ for i_annotation in range(n_annotation):  # 每张图片进行采样
 
         # 滤除小框
         index = np.max(boxgts[:, 2:], axis=1) > configer.sideMin
-        boxgts = boxgts[index]
-        n_boxgt = boxgts.shape[0]
-        FACE_USED_CNT += n_boxgt
-
-        if n_boxgt == 0:
-            continue
-        
         boxgts[:, 2] += boxgts[:, 0]; boxgts[:, 3] += boxgts[:, 1]          # x1, y1, x2, y2
 
         # ----------------------- 依据图片中框的个数进行随机采样 -----------------------
@@ -97,6 +90,14 @@ for i_annotation in range(n_annotation):  # 每张图片进行采样
                 SAVE_CNT += 1
 
                 print("\rANNO: [{}]/[{}] | NEG: [{}]/[{}]".format(i_annotation, n_annotation, i_neg, n_neg))
+
+        # 滤除小框
+        boxgts = boxgts[index]
+        n_boxgt = boxgts.shape[0]
+        FACE_USED_CNT += n_boxgt
+
+        if n_boxgt == 0:
+            continue
         
         # ----------------------- 对于每个框，在其附近进行采样 -----------------------
         for i_boxgt in range(n_boxgt):
