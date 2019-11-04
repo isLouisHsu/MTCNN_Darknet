@@ -5,7 +5,7 @@
 @Author: louishsu
 @E-mail: is.louishsu@foxmail.com
 @Date: 2019-10-26 11:26:49
-@LastEditTime: 2019-11-04 16:17:57
+@LastEditTime: 2019-11-04 20:57:56
 @Update: 
 '''
 import torch
@@ -175,22 +175,21 @@ class MtcnnLoss(nn.Module):
     def forward(self, pred, labels, offsets, landmarks):
         """
         Params:
-            pred:      {tensor(N, 15)}
-            labels:    {tensor(N)}
-            offsets:   {list[tensor(0,) or tensor(4,)]}
-            landmarks: {list[tensor(0,) or tensor(10,)]}
+            pred:        {tensor(N, 15)}
+            gt_label:    {tensor(N)}
+            gt_bbox:     {tensor(N,  4)}
+            gt_landmark: {tensor(N, 10)}
         """
         n_samples = pred.shape[0]
-        if pred.dim() > 2:
-            pred = pred.view(n_samples, -1)
+        pred = pred.squeeze()
 
         # 分类
-        cls_pred = torch.sigmoid(pred[:, 0].squeeze())
+        cls_pred = torch.sigmoid(pred[:, 0])
         cls_gt   = torch.where((labels == 1)^(labels == -2), 
                                 torch.ones_like(labels), torch.zeros_like(labels))
         mask     = labels >= 0
         cls_pred = torch.masked_select(cls_pred, mask)
-        cls_gt   = torch.masked_select(cls_gt, mask)
+        cls_gt   = torch.masked_select(cls_gt,   mask)
         
         loss_cls = self.bce(cls_pred, cls_gt)
         n_keep = int(self.ohem * loss_cls.shape[0])
@@ -202,7 +201,7 @@ class MtcnnLoss(nn.Module):
             loss_offset = 0
         else:
             offset_pred = pred[idx, 1: 5]
-            offset_gt   = torch.stack([offsets[i] for i in range(n_samples) if idx[i] == 1], dim=0)
+            offset_gt   = offsets[idx]
             loss_offset = torch.mean(self.mse(offset_pred, offset_gt), dim=1)
             n_keep = int(self.ohem * loss_offset.shape[0])
             loss_offset = torch.mean(torch.topk(loss_offset, n_keep)[0])
@@ -213,7 +212,7 @@ class MtcnnLoss(nn.Module):
             loss_landmark = 0
         else:
             landmark_pred = pred[idx, 5:]
-            landmark_gt   = torch.stack([landmarks[i] for i in range(n_samples) if idx[i] == 1], dim=0)
+            landmark_gt   = landmarks[idx]
             loss_landmark = torch.mean(self.mse(landmark_pred, landmark_gt), dim=1)
             n_keep = int(self.ohem * loss_landmark.shape[0])
             loss_landmark = torch.mean(torch.topk(loss_landmark, n_keep)[0])
@@ -277,20 +276,11 @@ class LossFn(nn.Module):
         Params:
             pred:        {tensor(N, 15)}
             gt_label:    {tensor(N)}
-            gt_bbox:     {list[tensor(0,) or tensor(4,)]}
-            gt_landmark: {list[tensor(0,) or tensor(10,)]}
+            gt_bbox:     {tensor(N,  4)}
+            gt_landmark: {tensor(N, 10)}
         """
         pred = pred.view(pred.shape[0], 15)
 
-        for t in gt_bbox:
-            if t.size(0) ==  4: 
-                tmp = t; break
-        gt_bbox     = torch.stack([torch.zeros_like(tmp) if t.size(0) == 0 else t for t in gt_bbox], dim=0)
-        for t in gt_landmark:
-            if t.size(0) == 10: 
-                tmp = t; break
-        gt_landmark = torch.stack([torch.zeros_like(tmp) if t.size(0) == 0 else t for t in gt_landmark], dim=0)
-        
         cls_pred        = torch.sigmoid(pred[:, 0])
         box_offset_pred = pred[:, 1: 5]
         box_offset_pred = pred[:, 5:]

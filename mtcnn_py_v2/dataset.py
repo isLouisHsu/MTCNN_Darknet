@@ -5,7 +5,7 @@
 @Author: louishsu
 @E-mail: is.louishsu@foxmail.com
 @Date: 2019-10-26 10:43:43
-@LastEditTime: 2019-10-26 12:36:46
+@LastEditTime: 2019-11-04 20:56:18
 @Update: 
 '''
 import os
@@ -28,8 +28,8 @@ def collate_fn(batch):
     
     images = torch.from_numpy(images).float()
     labels = torch.tensor(labels).float()
-    offsets = [torch.tensor(_) for _ in offsets]
-    landmarks = [torch.tensor(_) for _ in landmarks]
+    offsets = torch.tensor(offsets)
+    landmarks = torch.tensor(landmarks)
 
     return images, labels, offsets, landmarks
 
@@ -56,16 +56,16 @@ class MtcnnData(Dataset):
         filename = line[0]
         label    = int(line[1])
         if label == 0:      # neg
-            offset = []
-            landmark = []
+            offset   = np.zeros(4)
+            landmark = np.zeros(10)
         elif label == 1:    # pos
-            offset = list(map(float, line[2:]))
-            landmark = []
+            offset   = list(map(float, line[2:]))
+            landmark = np.zeros(10)
         elif label == -1:   # part
-            offset = list(map(float, line[2:]))
-            landmark = []
+            offset   = list(map(float, line[2:]))
+            landmark = np.zeros(10)
         elif label == -2:   # landmark
-            offset = []
+            offset   = np.zeros(4)
             landmark = list(map(float, line[2:]))
 
         return filename, label, offset, landmark
