@@ -5,7 +5,7 @@
 @Author: louishsu
 @E-mail: is.louishsu@foxmail.com
 @Date: 2019-10-25 12:25:16
-@LastEditTime: 2019-11-03 21:37:41
+@LastEditTime: 2019-11-04 09:25:12
 @Update: 
 '''
 import os
@@ -23,6 +23,8 @@ if not os.path.exists(configer.pImage):
 
 # 初始化全局变量
 SAVE_CNT = 0                            # 图片保存计数
+FACE_CNT = 0                            # 人脸计数
+FACE_USED_CNT = 0                       # 使用的人脸计数
 SAVE_IMAGE_NAME = configer.pImage + '{:d}.jpg'
 SAVE_ANNO_FP    = open(configer.pAnno[0], 'w')
 
@@ -31,12 +33,12 @@ with open(configer.annotations, 'r') as f:
     annotations = f.readlines()
 n_annotation = len(annotations)
 
-BAR = ProcessBar(n_annotation)
+# BAR = ProcessBar(n_annotation)
 
 # 进行采样
 for i_annotation in range(n_annotation):  # 每张图片进行采样
 
-    BAR.step(i_annotation) 
+    # BAR.step(i_annotation) 
     annotation = annotations[i_annotation]
 
     # 读取图片
@@ -55,8 +57,10 @@ for i_annotation in range(n_annotation):  # 每张图片进行采样
             print(boxgts)
             continue
 
-        boxgts[:, 2] += boxgts[:, 0]; boxgts[:, 3] += boxgts[:, 1]      # x1, y1, x2, y2
+        boxgts[:, 2] += boxgts[:, 0]; boxgts[:, 3] += boxgts[:, 1]          # x1, y1, x2, y2
         n_boxgt = boxgts.shape[0]
+
+        FACE_CNT += n_boxgt
 
         # ----------------------- 依据图片中框的个数进行随机采样 -----------------------
         n_neg, i_neg = configer.pNums[0] * n_boxgt, 0
@@ -81,7 +85,7 @@ for i_annotation in range(n_annotation):  # 每张图片进行采样
                 i_neg += 1
                 SAVE_CNT += 1
 
-                # print("\rANNO: [{}]/[{}] | NEG: [{}]/[{}]".format(i_annotation, n_annotation, i_neg, n_neg))
+                print("\rANNO: [{}]/[{}] | NEG: [{}]/[{}]".format(i_annotation, n_annotation, i_neg, n_neg))
         
         # ----------------------- 对于每个框，在其附近进行采样 -----------------------
         for i_boxgt in range(n_boxgt):
@@ -94,9 +98,11 @@ for i_annotation in range(n_annotation):  # 每张图片进行采样
             wgt, hgt = x2gt - x1gt, y2gt - y1gt                             # 长宽
             if max(wgt, hgt) < configer.sideMin or \
                 min(wgt, hgt) < 0 or \
-                x1gt < 0 or y1gt < 0 or x2gt > wgt or y2gt > hgt:           # 忽略过小的框
+                x1gt < 0 or y1gt < 0 or x2gt > imW or y2gt > imH:           # 忽略过小的框
                 continue
             cxgt, cygt = (x1gt + x2gt) / 2, (y1gt + y2gt) / 2               # 中心
+
+            FACE_USED_CNT += 1
             
             # -------------- 附近采样：neg样本  --------------
             i_neg = 0
@@ -126,71 +132,7 @@ for i_annotation in range(n_annotation):  # 每张图片进行采样
                     # 计数
                     i_neg += 1
 
-                    # print("\rANNO: [{}]/[{}] | BOX GT: [{}]/[{}] | NEG: [{}]/[{}]".format(i_annotation, n_annotation, i_boxgt, n_boxgt, i_neg, configer.pNums[1]))
-
-            # -------------- 附近采样：part,pos 样本 --------------
-            # i_part, i_pos, n_iter = 0, 0, 0
-            # while i_part < configer.pNums[2] or i_pos  < configer.pNums[3]:
-                
-            #     if n_iter > 5*(configer.pNums[2] + configer.pNums[3]):
-            #         break
-
-            #     sl = np.floor(min(wgt, hgt) * 0.8)
-            #     sh = np.ceil (max(wgt, hgt) * 1.25)
-            #     sr = npr.randint(sl, sh)      
-            #     dx = npr.randint(- wgt * 0.2, wgt * 0.2 + 1)# 随机偏移
-            #     dy = npr.randint(- hgt * 0.2, hgt * 0.2 + 1)# 随机偏移
-
-            #     x1r = int(max(0, cxgt + dx - sr / 2))       # 左上角x
-            #     y1r = int(max(0, cygt + dy - sr / 2))       # 左上角y
-            #     x2r, y2r = x1r + sr, y1r + sr               # 右下角坐标
-            #     if x2r > imW or y2r > imH:
-            #         n_iter += 1
-            #         continue
-
-            #     boxr = np.array([x1r, y1r, x2r, y2r])       # 随机框
-            #     boxgt = np.array([x1gt, y1gt, x2gt, y2gt])  # 真实框
-            #     iour = iou(boxr, boxgt.reshape(1, -1))      # 计算与真实框的IoU
-
-            #     if iour < configer.iouThresh[1]:            # `neg`样本，舍去
-            #         n_iter += 1
-            #         continue
-            
-            #     # 保存图片
-            #     imr = image[y1r: y2r, x1r: x2r]
-
-            #     # 图像扩增：水平镜像
-            #     if configer.augment and npr.rand() > 0.5:
-            #         imr = imr[:, ::-1]
-            #         boxr [[0, 2]] = imW - boxr [[2, 0]]
-            #         boxgt[[0, 2]] = imW - boxgt[[2, 0]]
-
-            #     imr = cv2.resize(imr, (12, 12))
-            #     pathr = SAVE_IMAGE_NAME.format(SAVE_CNT)
-            #     cv2.imwrite(pathr, imr)
-            #     SAVE_CNT += 1
-                
-            #     # 保存标注
-            #     x1f = (boxgt[0] - boxr[0]) / sr
-            #     y1f = (boxgt[1] - boxr[1]) / sr
-            #     x2f = (boxgt[2] - boxr[2]) / sr
-            #     y2f = (boxgt[3] - boxr[3]) / sr
-            #     boxf = np.array([x1f, y1f, x2f, y2f])
-            #     boxf = ' '.join(list(map(str, boxf)))
-
-            #     if iour < configer.iouThresh[2]:            # `part`样本
-            #         label = configer.label['part']
-            #         if i_part > configer.pNums[2]:
-            #             n_iter += 1
-            #             continue
-            #         i_part += 1
-            #     elif iour > configer.iouThresh[2]:          # `pos`样本
-            #         label = configer.label['pos']
-            #         if i_pos > configer.pNums[3]:
-            #             n_iter += 1
-            #             continue
-            #         i_pos += 1
-            #     n_iter = 0
+                    print("\rANNO: [{}]/[{}] | BOX GT: [{}]/[{}] | NEG: [{}]/[{}]".format(i_annotation, n_annotation, i_boxgt, n_boxgt, i_neg, configer.pNums[1]))
 
             # -------------- 附近采样：part样本 --------------
             i_part, n_iter = 0, 0
@@ -246,6 +188,7 @@ for i_annotation in range(n_annotation):  # 每张图片进行采样
                     label = configer.label['part']
                     i_part += 1
                     n_iter = 0
+                    print("\rANNO: [{}]/[{}] | BOX GT: [{}]/[{}] | PART: [{}]/[{}]".format(i_annotation, n_annotation, i_boxgt, n_boxgt, i_part, configer.pNums[2]))
                 else: n_iter += 1
                 
             # -------------- 附近采样：pos 样本 --------------
@@ -302,11 +245,10 @@ for i_annotation in range(n_annotation):  # 每张图片进行采样
                     label = configer.label['pos']
                     i_pos += 1
                     n_iter = 0
+                    print("\rANNO: [{}]/[{}] | BOX GT: [{}]/[{}] | POS: [{}]/[{}]".format(i_annotation, n_annotation, i_boxgt, n_boxgt, i_pos, configer.pNums[3]))
                 else: 
                     n_iter += 1
 
-                # print("\rANNO: [{}]/[{}] | BOX GT: [{}]/[{}] | PART: [{}]/[{}] | POS: [{}]/[{}]".format(i_annotation, n_annotation, i_boxgt, n_boxgt, i_part, configer.pNums[2], i_pos, configer.pNums[3]))
-                    
                 annor = '{} {} {}\n'.format(pathr, label, boxf)
                 SAVE_ANNO_FP.write(annor)
     
@@ -321,6 +263,8 @@ for i_annotation in range(n_annotation):  # 每张图片进行采样
         cxgt, cygt = (x1gt + x2gt) / 2, (y1gt + y2gt) / 2                           # 中心
         landmarkgt = np.array(list(map(float, box_landmark_gt[4:]))).reshape(5, -1) # xx1, yy1, ..., xx5, yy5
         
+        FACE_CNT += 1
+
         i_landmark = 0
         while i_landmark < configer.pNums[4]:
 
@@ -340,12 +284,16 @@ for i_annotation in range(n_annotation):  # 每张图片进行采样
             if x2r > imW or y2r > imH:
                 continue
             
+            FACE_USED_CNT += 1
+
             boxr = np.array([x1r, y1r, x2r, y2r])       # 随机框
             boxgt = np.array([x1gt, y1gt, x2gt, y2gt])  # 真实框
             iour = iou(boxr, boxgt.reshape(1, -1))      # 计算与真实框的IoU
 
             if iour < configer.iouThresh[2]:            # 非`pos`样本，舍去
                 continue
+
+            FACE_CNT += 1
             
             # 水平翻转
             if configer.augment and npr.rand() > 0.5:
@@ -386,9 +334,11 @@ for i_annotation in range(n_annotation):  # 每张图片进行采样
 
             i_landmark += 1
 
-            # print("\rANNO: [{}]/[{}] | LANDMARK: [{}]/[{}]".format(i_annotation, n_annotation, i_landmark, configer.pNums[4]))
+            print("\rANNO: [{}]/[{}] | LANDMARK: [{}]/[{}]".format(i_annotation, n_annotation, i_landmark, configer.pNums[4]))
             
             # show_bbox(imager, np.c_[np.r_[np.c_[boxgt, boxr]].T, np.array([1, iour])], landmarkgtr.reshape((1, 10)), show_score=True)
+
+print("Number of faces: {}, Number of faces used: {}".format(FACE_CNT, FACE_USED_CNT))
 
 SAVE_ANNO_FP.close()
 
