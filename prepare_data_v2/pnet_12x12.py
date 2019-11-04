@@ -5,7 +5,7 @@
 @Author: louishsu
 @E-mail: is.louishsu@foxmail.com
 @Date: 2019-10-25 12:25:16
-@LastEditTime: 2019-11-04 09:25:12
+@LastEditTime: 2019-11-04 12:19:25
 @Update: 
 '''
 import os
@@ -343,26 +343,43 @@ print("Number of faces: {}, Number of faces used: {}".format(FACE_CNT, FACE_USED
 SAVE_ANNO_FP.close()
 
 # 划分数据集
+TRAIN = []; VALID = []; TEST = []
+
 with open(configer.pAnno[0], 'r') as f:
     lines = np.array(f.readlines())
     
-n_samples = lines.shape[0]
-n_train   = int(n_samples * configer.splitratio[0])
-n_valid   = int(n_samples * configer.splitratio[1])
-n_test    = n_samples - n_train - n_valid
-idx       = np.arange(n_samples)
-idx_train = npr.choice(idx, n_train)
-idx_valid_test = list(filter(lambda x: x not in idx_train, idx))
-idx_valid = npr.choice(idx_valid_test, n_valid)
-idx_test  = list(filter(lambda x: x not in idx_valid, idx_valid_test))
+n_samples = lines.shape[0] 
+sampletypes = np.array(list(map(lambda x: int(x.split(' ')[1]), lines)))
+for st in ['pos', 'part', 'neg', 'landmark']:
+    lines_st   = lines[sampletypes == configer.label[st]]
+    idx        = np.arange(lines_st.shape[0])
+    _n_samples = idx.shape[0] 
+    _n_train   = int(_n_samples*configer.splitratio[0])
+    _n_valid   = int(_n_samples*configer.splitratio[1])
+    idx_train = npr.choice(idx, _n_train)
+    idx_valid_test = list(filter(lambda x: x not in idx_train, idx))
+    idx_valid = npr.choice(idx_valid_test, _n_valid)
+    idx_test  = list(filter(lambda x: x not in idx_valid, idx_valid_test))
+
+    TRAIN += [lines_st[idx_train]]
+    VALID += [lines_st[idx_valid]]
+    TEST  += [lines_st[idx_test ]]
+
+TRAIN = np.concatenate(TRAIN)
+VALID = np.concatenate(VALID)
+TEST  = np.concatenate(TEST )
+
+n_train   = TRAIN.shape[0]
+n_valid   = VALID.shape[0]
+n_test    = TEST.shape[0]
 
 print("Train: {} | Valid: {} | Test: {} || {}: {}: {}".\
             format(n_train, n_valid, n_test, 
                     n_train / n_samples, n_valid / n_samples, n_test / n_samples))
 
 with open(configer.pAnno[1], 'w') as f:
-    f.writelines(lines[idx_train])
+    f.writelines(TRAIN)
 with open(configer.pAnno[2], 'w') as f:
-    f.writelines(lines[idx_valid])
+    f.writelines(VALID)
 with open(configer.pAnno[3], 'w') as f:
-    f.writelines(lines[idx_test])
+    f.writelines(TEST )
