@@ -5,7 +5,7 @@
 @Author: louishsu
 @E-mail: is.louishsu@foxmail.com
 @Date: 2019-10-26 11:43:36
-@LastEditTime: 2019-11-03 19:14:45
+@LastEditTime: 2019-11-04 13:48:57
 @Update: 
 '''
 import os
@@ -52,7 +52,7 @@ class MtcnnTrainer(object):
 
         ## for optimization
         self.criterion = criterion
-        self.optimizer = optimizer(params, configer.lrbase)
+        self.optimizer = optimizer(params, configer.lrbase, weight_decay=4e-5)
         self.lr_scheduler = lr_scheduler(self.optimizer, configer.adjstep, configer.gamma)
         self.writer = SummaryWriter(configer.logdir)
         self.writer.add_graph(self.net, (torch.rand([1] + trainset.image_size), ))

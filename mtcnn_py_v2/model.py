@@ -5,7 +5,7 @@
 @Author: louishsu
 @E-mail: is.louishsu@foxmail.com
 @Date: 2019-10-26 11:26:49
-@LastEditTime: 2019-11-03 20:07:33
+@LastEditTime: 2019-11-04 13:59:47
 @Update: 
 '''
 import torch
@@ -281,6 +281,11 @@ class LossFn(nn.Module):
             gt_landmark: {list[tensor(0,) or tensor(10,)]}
         """
         pred = pred.view(pred.shape[0], 15)
+
+        for t in gt_bbox:     if t.size(0) ==  4: tmp = t; break
+        gt_bbox     = torch.stack([torch.zeros_like(tmp) if t.size(0) == 0 else t for t in gt_bbox], dim=0)
+        for t in gt_landmark: if t.size(0) == 10: tmp = t; break
+        gt_landmark = torch.stack([torch.zeros_like(tmp) if t.size(0) == 0 else t for t in gt_landmark], dim=0)
         
         cls_pred        = torch.sigmoid(pred[:, 0])
         box_offset_pred = pred[:, 1: 5]
