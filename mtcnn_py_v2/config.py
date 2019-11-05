@@ -16,7 +16,7 @@ configer.datapath = '../data/'
 configer.logdir = './logs/'
 configer.ckptdir = './ckptdir/'
 
-configer.batchsize = 32
+configer.batchsize = 512
 configer.n_epoch = 20
 
 configer.lrbase = 1e-2

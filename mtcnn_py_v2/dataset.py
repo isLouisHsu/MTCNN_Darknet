@@ -5,7 +5,7 @@
 @Author: louishsu
 @E-mail: is.louishsu@foxmail.com
 @Date: 2019-10-26 10:43:43
-@LastEditTime: 2019-11-04 20:56:18
+@LastEditTime: 2019-11-05 09:22:05
 @Update: 
 '''
 import os
@@ -28,8 +28,8 @@ def collate_fn(batch):
     
     images = torch.from_numpy(images).float()
     labels = torch.tensor(labels).float()
-    offsets = torch.tensor(offsets)
-    landmarks = torch.tensor(landmarks)
+    offsets = torch.tensor(offsets).float()
+    landmarks = torch.tensor(landmarks).float()
 
     return images, labels, offsets, landmarks
 

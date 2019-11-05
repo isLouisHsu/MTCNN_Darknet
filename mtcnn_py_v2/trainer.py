@@ -5,7 +5,7 @@
 @Author: louishsu
 @E-mail: is.louishsu@foxmail.com
 @Date: 2019-10-26 11:43:36
-@LastEditTime: 2019-11-04 13:48:57
+@LastEditTime: 2019-11-05 09:17:43
 @Update: 
 '''
 import os
@@ -140,8 +140,8 @@ class MtcnnTrainer(object):
             if self.configer.cuda and cuda.is_available(): 
                 images = images.cuda()
                 labels = labels.cuda()
-                offsets = [_.cuda() for _ in offsets]
-                landmarks = [_.cuda() for _ in landmarks]
+                offsets = offsets.cuda()
+                landmarks = landmarks.cuda()
             
             pred = self.net(images)
             loss_i, loss_cls, loss_offset, loss_landmark = self.criterion(pred, labels, offsets, landmarks)
@@ -188,8 +188,8 @@ class MtcnnTrainer(object):
                 if self.configer.cuda and cuda.is_available(): 
                     images = images.cuda()
                     labels = labels.cuda()
-                    offsets = [_.cuda() for _ in offsets]
-                    landmarks = [_.cuda() for _ in landmarks]
+                    offsets = offsets.cuda()
+                    landmarks = landmarks.cuda()
                 
                 pred = self.net(images)
                 loss_i, loss_cls, loss_offset, loss_landmark = self.criterion(pred, labels, offsets, landmarks)

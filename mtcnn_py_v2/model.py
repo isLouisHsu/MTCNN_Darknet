@@ -5,7 +5,7 @@
 @Author: louishsu
 @E-mail: is.louishsu@foxmail.com
 @Date: 2019-10-26 11:26:49
-@LastEditTime: 2019-11-04 20:57:56
+@LastEditTime: 2019-11-05 09:26:09
 @Update: 
 '''
 import torch
@@ -283,7 +283,7 @@ class LossFn(nn.Module):
 
         cls_pred        = torch.sigmoid(pred[:, 0])
         box_offset_pred = pred[:, 1: 5]
-        box_offset_pred = pred[:, 5:]
+        landmark_offset_pred = pred[:, 5:]
             
         cls_loss = self.cls_loss(gt_label, cls_pred)
 
