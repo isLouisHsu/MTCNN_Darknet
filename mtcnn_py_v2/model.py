@@ -5,7 +5,7 @@
 @Author: louishsu
 @E-mail: is.louishsu@foxmail.com
 @Date: 2019-10-26 11:26:49
-@LastEditTime: 2019-11-05 09:26:09
+@LastEditTime: 2019-11-05 09:47:43
 @Update: 
 '''
 import torch
@@ -296,7 +296,7 @@ class LossFn(nn.Module):
             landmark_loss = self.landmark_loss(gt_label, gt_landmark, landmark_offset_pred)
             
         total_loss = cls_loss + box_offset_loss + landmark_loss
-        return total_loss
+        return total_loss, cls_loss, box_offset_loss, landmark_loss
 
 
 # if __name__ == "__main__":
