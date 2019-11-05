@@ -5,7 +5,7 @@
 @Author: louishsu
 @E-mail: is.louishsu@foxmail.com
 @Date: 2019-10-26 11:26:49
-@LastEditTime: 2019-11-05 09:47:43
+@LastEditTime: 2019-11-05 11:13:11
 @Update: 
 '''
 import torch
@@ -222,12 +222,12 @@ class MtcnnLoss(nn.Module):
 
 
 class LossFn(nn.Module):
-    def __init__(self, cls_factor=1, box_factor=1, landmark_factor=1):
+    def __init__(self, cls_factor=1, box_factor=1, land_factor=1):
         super(LossFn, self).__init__()
         # loss function
         self.cls_factor = cls_factor
         self.box_factor = box_factor
-        self.landmark_factor = landmark_factor
+        self.land_factor = land_factor
         self.loss_cls = nn.BCELoss()  # binary cross entropy
         self.loss_box = nn.MSELoss()  # mean square error
         self.loss_landmark = nn.MSELoss()
