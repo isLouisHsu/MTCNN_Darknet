@@ -28,7 +28,7 @@ trainset = MtcnnData(configer.datapath, 12, 'train', save_in_memory=False)
 validset = MtcnnData(configer.datapath, 12, 'valid', save_in_memory=False)
 testset  = MtcnnData(configer.datapath, 12, 'test',  save_in_memory=False)
 # criterion = MtcnnLoss(1.0, 0.5, 0.0)
-criterion = LossFn(1.0, 0.5, 0.0)
+criterion = LossFn(1.0, 0.5, 0.5)
 optimizer = optim.Adam
 lr_scheduler = lr_scheduler.MultiStepLR
 
