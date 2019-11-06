@@ -124,6 +124,9 @@ for i_image, (imname, [boxpreds, boxgts, landgts]) in enumerate(DETS_BY_PNET.ite
                     # 计数
                     SAVE_CNT += 1
                     i_neg += 1
+
+                    print('IMAGE: [{}]/[{}] | DET: [{}]/[{}] | NEG: [{}]/[{}]'.\
+                            format(i_image, n_image, i_det, n_det, i_neg, n_neg))
                     
             elif iour.max() > configer.iouThresh[1]:                        # part & pos
                 
@@ -143,13 +146,21 @@ for i_image, (imname, [boxpreds, boxgts, landgts]) in enumerate(DETS_BY_PNET.ite
                 # 标注
                 if iour.max() < configer.iouThresh[2]:                      # part
                     label = configer.label['part']
+                    i_part += 1
+                    print('IMAGE: [{}]/[{}] | DET: [{}]/[{}] | PART: [{}]'.\
+                            format(i_image, n_image, i_det, n_det, i_part))
+                
                 else:                                                       # pos
                     label = configer.label['part']
+                    i_pos  += 1
+
+                    print('IMAGE: [{}]/[{}] | DET: [{}]/[{}] | POS: [{}]'.\
+                            format(i_image, n_image, i_det, n_det, i_pos))
+
                 annor = '{} {} {}\n'.format(pathr, label, boxf)
                 SAVE_ANNO_FP.write(annor)
                 # 计数
                 SAVE_CNT += 1
-                i_pos  += 1
             
     else:                               # 来自`POINT FACE`，含关键点，仅用作关键点回归
         
@@ -226,9 +237,10 @@ for i_image, (imname, [boxpreds, boxgts, landgts]) in enumerate(DETS_BY_PNET.ite
 
             i_landmark += 1
 
-            print("\rANNO: [{}]/[{}] | LANDMARK: [{}]/[{}]".format(i_annotation, n_annotation, i_landmark, configer.rNums[-1]))
-            
-            show_bbox(imager, np.c_[np.r_[np.c_[boxgt, boxr]].T, np.array([1, iour])], landmarkgtr.reshape((1, 10)), show_score=True)
+            print("IMAGE: [{}]/[{}] | LANDMARK: [{}]/[{}]".\
+                format(i_image, n_image, i_landmark, configer.rNums[-1]))
+
+            # show_bbox(imager, np.c_[np.r_[np.c_[boxgt, boxr]].T, np.array([1, iour])], landmarkgtr.reshape((1, 10)), show_score=True)
 
 print("Number of faces: {}, Number of faces used: {}".format(FACE_CNT, FACE_USED_CNT))
 
