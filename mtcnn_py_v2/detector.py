@@ -5,7 +5,7 @@
 @Author: louishsu
 @E-mail: is.louishsu@foxmail.com
 @Date: 2019-10-26 11:25:12
-@LastEditTime: 2019-10-29 11:15:41
+@LastEditTime: 2019-11-06 10:13:52
 @Update: 
 '''
 import os
@@ -55,6 +55,10 @@ class MtcnnDetector(object):
             self.pnet.cuda()
             self.rnet.cuda()
             self.onet.cuda()
+        
+        self.pnet.eval()
+        self.rnet.eval()
+        self.onet.eval()
 
     def _load_state(self, net):
         
@@ -136,7 +140,8 @@ class MtcnnDetector(object):
             ## forward network
             X = ToTensor()(cur_img).unsqueeze(0)
             if cuda.is_available(): X = X.cuda()
-            y_pred = self.pnet(X)[0].cpu().detach().numpy()
+            with torch.no_grad():
+                y_pred = self.pnet(X)[0].cpu().detach().numpy()
 
             ## generate bbox
             cls_map = sigmoid(y_pred[0,:,:])
@@ -204,7 +209,8 @@ class MtcnnDetector(object):
         ## forward network
         X = torch.cat(list(map(lambda x: ToTensor()(x).unsqueeze(0), patches)), dim=0)
         if cuda.is_available(): X = X.cuda()
-        y_pred = self.rnet(X).cpu().detach().numpy()  # (n_boxes, 15)
+        with torch.no_grad():
+            y_pred = self.rnet(X).cpu().detach().numpy()  # (n_boxes, 15)
         scores = sigmoid(y_pred[:, 0])          # (n_boxes,)
         offset = y_pred[:, 1: 5]                # (n_boxes, 4)
         landmark = y_pred[:, 5:]                # (n_boxes, 10)
@@ -255,7 +261,8 @@ class MtcnnDetector(object):
         ## forward network
         X = torch.cat(list(map(lambda x: ToTensor()(x).unsqueeze(0), patches)), dim=0)
         if cuda.is_available(): X = X.cuda()
-        y_pred = self.onet(X).cpu().detach().numpy()  # (n_boxes, 15)
+        with torch.no_grad():
+            y_pred = self.onet(X).cpu().detach().numpy()  # (n_boxes, 15)
         scores = sigmoid(y_pred[:, 0])          # (n_boxes,)
         offset = y_pred[:, 1: 5]                # (n_boxes, 4)
         landmark = y_pred[:, 5:]                # (n_boxes, 10)

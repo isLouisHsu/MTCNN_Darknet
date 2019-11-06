@@ -5,11 +5,12 @@
 @Author: louishsu
 @E-mail: is.louishsu@foxmail.com
 @Date: 2019-10-25 12:25:16
-@LastEditTime: 2019-11-04 20:30:58
+@LastEditTime: 2019-11-06 12:10:34
 @Update: 
 '''
 import os
 import cv2
+import random
 import numpy as np
 from numpy import random as npr
 
@@ -32,6 +33,7 @@ SAVE_ANNO_FP    = open(configer.pAnno[0], 'w')
 with open(configer.annotations, 'r') as f:
     annotations = f.readlines()
 n_annotation = len(annotations)
+random.shuffle(annotations)
 
 # BAR = ProcessBar(n_annotation)
 
@@ -270,7 +272,7 @@ for i_annotation in range(n_annotation):  # 每张图片进行采样
         boxgt = np.array(list(map(int, box_landmark_gt[:4])))           # x1, x2, y1, y2
         x1gt, x2gt, y1gt, y2gt = boxgt
         wgt, hgt = x2gt - x1gt, y2gt - y1gt
-        cxgt, cygt = (x1gt + x2gt) / 2, (y1gt + y2gt) / 2                           # 中心
+        cxgt, cygt = (x1gt + x2gt) / 2, (y1gt + y2gt) / 2               # 中心
         landmarkgt = np.array(list(map(float, box_landmark_gt[4:]))).reshape(5, -1) # xx1, yy1, ..., xx5, yy5
         
         FACE_CNT += 1
@@ -337,7 +339,7 @@ for i_annotation in range(n_annotation):  # 每张图片进行采样
             landmarkf = ' '.join(list(map(str, landmarkf)))
             
             annor = '{} {} {}\n'.\
-                    format(pathr, -2, landmarkf)
+                    format(pathr, configer.label['landmark'], landmarkf)
             SAVE_ANNO_FP.write(annor)
 
             i_landmark += 1
