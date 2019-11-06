@@ -5,14 +5,22 @@
 @Author: louishsu
 @E-mail: is.louishsu@foxmail.com
 @Date: 2019-10-25 12:40:40
-@LastEditTime: 2019-11-03 20:20:42
+@LastEditTime: 2019-11-06 13:05:48
 @Update: 
 '''
 import os
+import sys
 import numpy as np
 from config import configer
 
-with open(configer.pAnno[0], 'r') as f:
+net = sys.argv[1]
+ANNOFILES = {
+    'p': configer.pAnno[0],
+    'r': configer.rAnno[0],
+    'o': configer.oAnno[0],
+}
+
+with open(ANNOFILES[net], 'r') as f:
     annotations = f.readlines()
 annotations = list(map(lambda x: x.strip(), annotations))
 n_images = len(annotations)

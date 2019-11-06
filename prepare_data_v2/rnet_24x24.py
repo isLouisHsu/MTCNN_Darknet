@@ -102,7 +102,7 @@ for i_image, (imname, [boxpreds, boxgts, landgts]) in enumerate(DETS_BY_PNET.ite
         for i_det, boxr in enumerate(boxpreds):
             
             boxr = MtcnnDetector._square(boxr.reshape(1, -1)).reshape(-1)   # 转换为方形
-            boxr = np.round(boxr[:4]).astype(np.int)                    # 取整
+            boxr = np.round(boxr[:4]).astype(np.int)                        # 取整
             x1r, y1r, x2r, y2r = boxr
             wr = x2r - x1r + 1; hr = y2r - y1r + 1
             if wr < configer.sideMin or hr < configer.sideMin or\

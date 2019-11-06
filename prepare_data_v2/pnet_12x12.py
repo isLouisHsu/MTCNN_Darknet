@@ -5,7 +5,7 @@
 @Author: louishsu
 @E-mail: is.louishsu@foxmail.com
 @Date: 2019-10-25 12:25:16
-@LastEditTime: 2019-11-06 12:10:34
+@LastEditTime: 2019-11-06 13:00:35
 @Update: 
 '''
 import os
@@ -91,7 +91,7 @@ for i_annotation in range(n_annotation):  # 每张图片进行采样
                 i_neg += 1
                 SAVE_CNT += 1
 
-                print("\rANNO: [{}]/[{}] | NEG: [{}]/[{}]".format(i_annotation, n_annotation, i_neg, n_neg))
+                print("ANNO: [{}]/[{}] | NEG: [{}]/[{}]".format(i_annotation, n_annotation, i_neg, n_neg))
 
         # 滤除小框
         boxgts = boxgts[index]
@@ -144,7 +144,7 @@ for i_annotation in range(n_annotation):  # 每张图片进行采样
                     # 计数
                     i_neg += 1
 
-                    print("\rANNO: [{}]/[{}] | BOX GT: [{}]/[{}] | NEG: [{}]/[{}]".format(i_annotation, n_annotation, i_boxgt, n_boxgt, i_neg, configer.pNums[1]))
+                    print("ANNO: [{}]/[{}] | BOX GT: [{}]/[{}] | NEG: [{}]/[{}]".format(i_annotation, n_annotation, i_boxgt, n_boxgt, i_neg, configer.pNums[1]))
 
             # -------------- 附近采样：part样本 --------------
             i_part, n_iter = 0, 0
@@ -200,7 +200,7 @@ for i_annotation in range(n_annotation):  # 每张图片进行采样
                     label = configer.label['part']
                     i_part += 1
                     n_iter = 0
-                    print("\rANNO: [{}]/[{}] | BOX GT: [{}]/[{}] | PART: [{}]/[{}]".format(i_annotation, n_annotation, i_boxgt, n_boxgt, i_part, configer.pNums[2]))
+                    print("ANNO: [{}]/[{}] | BOX GT: [{}]/[{}] | PART: [{}]/[{}]".format(i_annotation, n_annotation, i_boxgt, n_boxgt, i_part, configer.pNums[2]))
                 else: n_iter += 1
                 
             # -------------- 附近采样：pos 样本 --------------
@@ -257,7 +257,7 @@ for i_annotation in range(n_annotation):  # 每张图片进行采样
                     label = configer.label['pos']
                     i_pos += 1
                     n_iter = 0
-                    print("\rANNO: [{}]/[{}] | BOX GT: [{}]/[{}] | POS: [{}]/[{}]".format(i_annotation, n_annotation, i_boxgt, n_boxgt, i_pos, configer.pNums[3]))
+                    print("ANNO: [{}]/[{}] | BOX GT: [{}]/[{}] | POS: [{}]/[{}]".format(i_annotation, n_annotation, i_boxgt, n_boxgt, i_pos, configer.pNums[3]))
                 else: 
                     n_iter += 1
 
@@ -344,7 +344,7 @@ for i_annotation in range(n_annotation):  # 每张图片进行采样
 
             i_landmark += 1
 
-            print("\rANNO: [{}]/[{}] | LANDMARK: [{}]/[{}]".format(i_annotation, n_annotation, i_landmark, configer.pNums[4]))
+            print("ANNO: [{}]/[{}] | LANDMARK: [{}]/[{}]".format(i_annotation, n_annotation, i_landmark, configer.pNums[4]))
             
             # show_bbox(imager, np.c_[np.r_[np.c_[boxgt, boxr]].T, np.array([1, iour])], landmarkgtr.reshape((1, 10)), show_score=True)
 
