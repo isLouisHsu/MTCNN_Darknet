@@ -5,7 +5,7 @@
 @Author: louishsu
 @E-mail: is.louishsu@foxmail.com
 @Date: 2019-10-26 11:26:49
-@LastEditTime: 2019-11-05 11:23:37
+@LastEditTime: 2019-11-06 09:32:01
 @Update: 
 '''
 import torch
@@ -239,7 +239,9 @@ class LossFn(nn.Module):
         mask = torch.ge(gt_label, 0)
         valid_gt_label = torch.masked_select(gt_label, mask)
         valid_pred_label = torch.masked_select(pred_label, mask)
-        return self.loss_cls(valid_pred_label, valid_gt_label) * self.cls_factor
+        loss = self.loss_cls(valid_pred_label, valid_gt_label)
+        loss = 0 if torch.isnan(loss) else loss
+        return loss
 
     def box_loss(self, gt_label, gt_offset, pred_offset):
         pred_offset = torch.squeeze(pred_offset)
@@ -256,7 +258,9 @@ class LossFn(nn.Module):
         # only valid element can effect the loss
         valid_gt_offset = gt_offset[chose_index, :]
         valid_pred_offset = pred_offset[chose_index, :]
-        return self.loss_box(valid_pred_offset, valid_gt_offset) * self.box_factor
+        loss = self.loss_box(valid_pred_offset, valid_gt_offset)
+        loss = 0 if torch.isnan(loss) else loss
+        return loss
 
     def landmark_loss(self, gt_label, gt_landmark, pred_landmark):
         pred_landmark = torch.squeeze(pred_landmark)
@@ -269,7 +273,9 @@ class LossFn(nn.Module):
 
         valid_gt_landmark = gt_landmark[chose_index, :]
         valid_pred_landmark = pred_landmark[chose_index, :]
-        return self.loss_landmark(valid_pred_landmark, valid_gt_landmark) * self.land_factor
+        loss = self.loss_landmark(valid_pred_landmark, valid_gt_landmark)
+        loss = 0 if torch.isnan(loss) else loss
+        return loss
 
     def forward(self, pred, gt_label, gt_bbox, gt_landmark):
         """
@@ -295,7 +301,9 @@ class LossFn(nn.Module):
         if self.land_factor != 0:
             landmark_loss = self.landmark_loss(gt_label, gt_landmark, landmark_offset_pred)
             
-        total_loss = cls_loss + box_offset_loss + landmark_loss
+        total_loss = cls_loss * self.cls_factor + \
+                        box_offset_loss * self.box_factor + \
+                        landmark_loss * self.land_factor
         return total_loss, cls_loss, box_offset_loss, landmark_loss
 
 

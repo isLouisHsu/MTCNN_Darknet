@@ -5,7 +5,7 @@
 @Author: louishsu
 @E-mail: is.louishsu@foxmail.com
 @Date: 2019-10-26 11:52:23
-@LastEditTime: 2019-11-05 09:23:54
+@LastEditTime: 2019-11-06 09:24:13
 @Update: 
 '''
 import os
@@ -30,7 +30,7 @@ testset  = MtcnnData(configer.datapath, 12, 'test',  save_in_memory=False)
 # criterion = MtcnnLoss(1.0, 0.5, 0.0)
 criterion = LossFn(1.0, 0.5, 0.5)
 optimizer = optim.Adam
-lr_scheduler = lr_scheduler.MultiStepLR
+lr_scheduler = lr_scheduler.ExponentialLR
 
 trainer = MtcnnTrainer(configer, net, params, trainset, validset, testset, criterion, optimizer, lr_scheduler)
 trainer.train()

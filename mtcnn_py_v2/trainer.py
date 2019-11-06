@@ -5,7 +5,7 @@
 @Author: louishsu
 @E-mail: is.louishsu@foxmail.com
 @Date: 2019-10-26 11:43:36
-@LastEditTime: 2019-11-05 09:17:43
+@LastEditTime: 2019-11-06 09:25:07
 @Update: 
 '''
 import os
@@ -47,13 +47,14 @@ class MtcnnTrainer(object):
         self.validset = validset
         self.testset  = testset
         self.trainloader = DataLoader(trainset, configer.batchsize, True,  collate_fn=collate_fn)
-        self.validloader = DataLoader(validset, configer.batchsize, False, collate_fn=collate_fn)
+        self.validloader = DataLoader(validset, configer.batchsize, True,  collate_fn=collate_fn)
         self.testloader  = DataLoader(testset,  configer.batchsize, False, collate_fn=collate_fn)
 
         ## for optimization
         self.criterion = criterion
         self.optimizer = optimizer(params, configer.lrbase, weight_decay=4e-5)
-        self.lr_scheduler = lr_scheduler(self.optimizer, configer.adjstep, configer.gamma)
+        # self.lr_scheduler = lr_scheduler(self.optimizer, configer.adjstep, configer.gamma)      # MultiStepLR
+        self.lr_scheduler = lr_scheduler(self.optimizer, 0.9)                                   # ExponentialLR
         self.writer = SummaryWriter(configer.logdir)
         self.writer.add_graph(self.net, (torch.rand([1] + trainset.image_size), ))
         
