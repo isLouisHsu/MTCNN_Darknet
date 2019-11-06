@@ -56,7 +56,7 @@ if not os.path.exists(configer.rDets):  # 若已生成则跳过
                 boxgts = np.array(list(map(int, boxgts))).reshape(-1, 4)        # x1, y1,  w,  h
             except:
                 continue
-            DETS_BY_PNET[imname] = [boxpreds, boxgts, None]
+            DETS_BY_PNET[imname] = [boxpreds, boxgts, np.array([])]
 
         else:
             annotation = annotation.split('jpg')[1].strip().split(' ')
@@ -79,7 +79,7 @@ for i_image, (imname, [boxpreds, boxgts, landgts]) in enumerate(DETS_BY_PNET.ite
     image  = cv2.imread(configer.images + imname, cv2.IMREAD_COLOR)
     imH, imW = image.shape[:2]
 
-    if landgts is not None:             # 来自`WIDER FACE`，无关键点
+    if landgts.shape[0] == 0:             # 来自`WIDER FACE`，无关键点
         
         n_boxgt = boxgts.shape[0]; FACE_CNT += n_boxgt
 
