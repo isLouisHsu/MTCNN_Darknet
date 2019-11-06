@@ -69,12 +69,12 @@ if not os.path.exists(configer.rDets):  # 若已生成则跳过
 else:
     DETS_BY_PNET = io.loadmat(configer.rDets)
 
-exit(0) # TODO:
-
 # 进行采样 
 n_image = len(DETS_BY_PNET)
-for i_image, (imname, [boxpreds, boxgts, landgts]) in enumerate(DETS_BY_PNET.items()):
-
+for i_image, (imname, boxpreds_boxgts_langts) in enumerate(DETS_BY_PNET.items()):
+    
+    if imname[:2] == '__': continue
+    boxpreds, boxgts, landgts = boxpreds_boxgts_langts[0]
     # 读取图片
     image  = cv2.imread(configer.images + imname, cv2.IMREAD_COLOR)
     imH, imW = image.shape[:2]
@@ -84,11 +84,11 @@ for i_image, (imname, [boxpreds, boxgts, landgts]) in enumerate(DETS_BY_PNET.ite
         n_boxgt = boxgts.shape[0]; FACE_CNT += n_boxgt
 
         # 滤除真实样本中的小框与异常框
-        idx1 = np.max(boxgts[:, 2:], axis=1) < configer.sideMin
-        idx2 = np.min(boxgts[:, 2:], axis=1) < 0
-        idx3 = np.bitwise_or(boxgts[:, 0] < 0, boxgts[:, 1] < 0)
-        idx4 = np.bitwise_or(boxgts[:, 0] + boxgts[:, 2] > imW - 1, boxgts[:, 1] + boxgts[:, 3] > imH - 1)
-        index = np.bitwise_not(np.bitwise_or(idx1, idx2, idx3, idx4))
+        idx1 = np.bitwise_or(np.max(boxgts[:, 2:], axis=1) < configer.sideMin, 
+                                    np.min(boxgts[:, 2:], axis=1) < 0)
+        idx2 = np.bitwise_or(boxgts[:, 0] < 0, boxgts[:, 1] < 0)
+        idx3 = np.bitwise_or(boxgts[:, 0] + boxgts[:, 2] > imW - 1, boxgts[:, 1] + boxgts[:, 3] > imH - 1)
+        index = np.bitwise_not(np.bitwise_or(idx1, idx2, idx3))
         boxgts = boxgts[index]; n_boxgt = boxgts.shape[0]; FACE_USED_CNT += n_boxgt
 
         if n_boxgt == 0:
@@ -126,7 +126,7 @@ for i_image, (imname, [boxpreds, boxgts, landgts]) in enumerate(DETS_BY_PNET.ite
                     i_neg += 1
 
                     print('IMAGE: [{}]/[{}] | DET: [{}]/[{}] | NEG: [{}]/[{}]'.\
-                            format(i_image, n_image, i_det, n_det, i_neg, n_neg))
+                            format(i_image, n_image, i_det, boxpreds.shape[0], i_neg, configer.rNums[0]))
                     
             elif iour.max() > configer.iouThresh[1]:                        # part & pos
                 
@@ -148,14 +148,14 @@ for i_image, (imname, [boxpreds, boxgts, landgts]) in enumerate(DETS_BY_PNET.ite
                     label = configer.label['part']
                     i_part += 1
                     print('IMAGE: [{}]/[{}] | DET: [{}]/[{}] | PART: [{}]'.\
-                            format(i_image, n_image, i_det, n_det, i_part))
+                            format(i_image, n_image, i_det, boxpreds.shape[0], i_part))
                 
                 else:                                                       # pos
-                    label = configer.label['part']
+                    label = configer.label['pos']
                     i_pos  += 1
 
                     print('IMAGE: [{}]/[{}] | DET: [{}]/[{}] | POS: [{}]'.\
-                            format(i_image, n_image, i_det, n_det, i_pos))
+                            format(i_image, n_image, i_det, boxpreds.shape[0], i_pos))
 
                 annor = '{} {} {}\n'.format(pathr, label, boxf)
                 SAVE_ANNO_FP.write(annor)
@@ -164,7 +164,7 @@ for i_image, (imname, [boxpreds, boxgts, landgts]) in enumerate(DETS_BY_PNET.ite
             
     else:                               # 来自`POINT FACE`，含关键点，仅用作关键点回归
         
-        x1gt, x2gt, y1gt, y2gt = boxgt[0]
+        x1gt, x2gt, y1gt, y2gt = boxgts[0]
         wgt, hgt   = x2gt - x1gt, y2gt - y1gt
         cxgt, cygt = (x1gt + x2gt) / 2, (y1gt + y2gt) / 2   # 中心
         landmarkgt = landgts.reshape(5, -1)                 # xx1, yy1, ..., xx5, yy5
