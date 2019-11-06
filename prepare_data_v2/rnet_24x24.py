@@ -41,7 +41,7 @@ if not os.path.exists(configer.rDets):  # 若已生成则跳过
     bar = ProcessBar(n_annotation)
     for i_annotation, annotation in enumerate(annotations):
         bar.step()
-        torch.cuda.empty_cache()
+        if torch.cuda.is_available(): torch.cuda.empty_cache()
 
         # 读取图片
         imname = annotation.split('jpg')[0] + 'jpg'
