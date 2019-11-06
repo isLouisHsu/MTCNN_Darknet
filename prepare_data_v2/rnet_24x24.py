@@ -64,7 +64,7 @@ if not os.path.exists(configer.rDets):  # 若已生成则跳过
             landgts = np.array(list(map(float, annotation[4:]))).reshape(-1, 10)
             DETS_BY_PNET[imname] = [boxpreds, boxgts, landgts]
 
-    io.savemat(configer.rDets)
+    io.savemat(configer.rDets, DETS_BY_PNET)
 
 else:
     DETS_BY_PNET = io.loadmat(configer.rDets)
