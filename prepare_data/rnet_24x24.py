@@ -12,7 +12,7 @@ from utils import iou, show_bbox
 from processbar import ProcessBar
 
 import sys
-sys.path.append('../mtcnn_py_v2/')
+sys.path.append('../mtcnn_py/')
 
 from detector import MtcnnDetector
 
@@ -35,8 +35,8 @@ n_annotation = len(annotations)
 random.shuffle(annotations)
 
 # 利用PNet生成候选框
-detector = MtcnnDetector()
 if not os.path.exists(configer.rDets):  # 若已生成则跳过
+    detector = MtcnnDetector()
 
     bar = ProcessBar(n_annotation)
     for i_annotation, annotation in enumerate(annotations):
