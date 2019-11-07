@@ -5,7 +5,7 @@
 @Author: louishsu
 @E-mail: is.louishsu@foxmail.com
 @Date: 2019-10-25 11:06:37
-@LastEditTime: 2019-11-07 19:36:15
+@LastEditTime: 2019-11-07 19:38:58
 @Update: 
 '''
 from easydict import EasyDict
@@ -36,10 +36,10 @@ configer.rAnno       = ['../data/24x24.txt',
                         '../data/24x24_test.txt']
 configer.rNums       = [15, -1, -1, 50]   # 分别表示每张图片`neg`, `part`, `pos`, `landmark`样本个数，由PNet结果决定
 
-configer.oDets       = '../data/rDets.mat'  # 利用PNet生成的候选框
-configer.oImage      = '../data/24x24/'
-configer.oAnno       = ['../data/24x24.txt', 
-                        '../data/24x24_train.txt', 
-                        '../data/24x24_valid.txt', 
-                        '../data/24x24_test.txt']
+configer.oDets       = '../data/oDets.mat'  # 利用PNet生成的候选框
+configer.oImage      = '../data/48x48/'
+configer.oAnno       = ['../data/48x48.txt', 
+                        '../data/48x48_train.txt', 
+                        '../data/48x48_valid.txt', 
+                        '../data/48x48_test.txt']
 configer.oNums       = [10, -1, -1, 50]   # 分别表示每张图片`neg`, `part`, `pos`, `landmark`样本个数，由PNet结果决定
