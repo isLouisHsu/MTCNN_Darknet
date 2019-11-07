@@ -5,7 +5,7 @@
 @Author: louishsu
 @E-mail: is.louishsu@foxmail.com
 @Date: 2019-10-26 11:25:12
-@LastEditTime: 2019-11-07 11:13:21
+@LastEditTime: 2019-11-07 20:00:32
 @Update: 
 '''
 import os
@@ -544,7 +544,7 @@ def main():
 
     import sys
     
-    detector = MtcnnDetector(min_face=12, thresh=[0.8, 0.6, 0.7], scale=0.79, stride=2, cellsize=12)
+    detector = MtcnnDetector(min_face=12, thresh=[0.6, 0.7, 0.7], scale=0.79, stride=2, cellsize=12)
     
     # imgfile = sys.argv[1]
     imgfile = "../images/test.jpg"
@@ -556,11 +556,11 @@ def main():
     show_bbox(image.copy(), boxes_c, landmark, False)
 
     boxes, boxes_c, landmark = detector._detect_rnet(image, boxes_c)
-    show_bbox(image.copy(), boxes, None, True)
-    show_bbox(image.copy(), boxes_c, landmark, True)
+    show_bbox(image.copy(), boxes, None, False)
+    show_bbox(image.copy(), boxes_c, landmark, False)
 
     boxes, boxes_c, landmark = detector._detect_onet(image, boxes_c)
-    show_bbox(image.copy(), boxes, None, True)
+    show_bbox(image.copy(), boxes, None, False)
     show_bbox(image.copy(), boxes_c, landmark, True)
     
 if __name__ == "__main__":
