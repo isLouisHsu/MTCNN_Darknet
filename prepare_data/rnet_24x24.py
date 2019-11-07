@@ -215,7 +215,7 @@ for i_image, (imname, boxpreds_boxgts_langts) in enumerate(DETS_BY_PNET.items())
 
             # 保存图片
             imr = imager[boxr[0]: boxr[2], boxr[1]: boxr[3]]
-            imr = cv2.resize(imr, (12, 12))
+            imr = cv2.resize(imr, (24, 24))
             pathr = SAVE_IMAGE_NAME.format(SAVE_CNT)
             cv2.imwrite(pathr, imr)
             SAVE_CNT += 1
