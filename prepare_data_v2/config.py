@@ -5,7 +5,7 @@
 @Author: louishsu
 @E-mail: is.louishsu@foxmail.com
 @Date: 2019-10-25 11:06:37
-@LastEditTime: 2019-11-07 09:26:11
+@LastEditTime: 2019-11-07 11:11:41
 @Update: 
 '''
 from easydict import EasyDict
@@ -34,7 +34,7 @@ configer.rAnno       = ['../data/24x24.txt',
                         '../data/24x24_train.txt', 
                         '../data/24x24_valid.txt', 
                         '../data/24x24_test.txt']
-configer.rNums       = [30, -1, -1, 50]   # 分别表示每张图片`neg`, `part`, `pos`, `landmark`样本个数，由PNet结果决定
+configer.rNums       = [15, -1, -1, 50]   # 分别表示每张图片`neg`, `part`, `pos`, `landmark`样本个数，由PNet结果决定
 
 configer.oImage      = '../data/48x48/'
 configer.oAnno       = '../data/48x48.txt'
