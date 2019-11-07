@@ -5,7 +5,7 @@
 @Author: louishsu
 @E-mail: is.louishsu@foxmail.com
 @Date: 2019-10-26 11:25:12
-@LastEditTime: 2019-11-06 10:13:52
+@LastEditTime: 2019-11-07 11:13:21
 @Update: 
 '''
 import os
@@ -62,7 +62,7 @@ class MtcnnDetector(object):
 
     def _load_state(self, net):
         
-        ckpt = '../mtcnn_py_v2/ckptdir/{}.pkl'.format(net._get_name())
+        ckpt = '../mtcnn_py/ckptdir/{}.pkl'.format(net._get_name())
         if not os.path.exists(ckpt): return
         print("load state from {}".format(ckpt))
         ckpt = torch.load(ckpt, map_location='cuda' if torch.cuda.is_available() else 'cpu')
