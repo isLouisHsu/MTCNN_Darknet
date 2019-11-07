@@ -110,25 +110,7 @@ for i_image, (imname, boxpreds_boxgts_langts) in enumerate(DETS_BY_PNET.items())
                 continue                                                    # 异常 舍去
 
             iour = iou(boxr, boxgts)                                        # iou
-            if iour.max() < configer.iouThresh[0]:                          # neg
-
-                if i_neg < configer.rNums[0]:
-                    # 图像
-                    imr = image[y1r: y2r, x1r: x2r]
-                    imr = cv2.resize(imr, (24, 24))
-                    pathr = SAVE_IMAGE_NAME.format(SAVE_CNT)
-                    cv2.imwrite(pathr, imr)
-                    # 标注
-                    annor = '{} {}\n'.format(pathr, configer.label['neg'])
-                    SAVE_ANNO_FP.write(annor)
-                    # 计数
-                    SAVE_CNT += 1
-                    i_neg += 1
-
-                    print('IMAGE: [{}]/[{}] | DET: [{}]/[{}] | NEG: [{}]/[{}]'.\
-                            format(i_image, n_image, i_det, boxpreds.shape[0], i_neg, configer.rNums[0]))
-                    
-            elif iour.max() > configer.iouThresh[1]:                        # part & pos
+            if iour.max() > configer.iouThresh[1]:                        # part & pos
                 
                 # 图像
                 imr = image[y1r: y2r, x1r: x2r]
@@ -161,6 +143,25 @@ for i_image, (imname, boxpreds_boxgts_langts) in enumerate(DETS_BY_PNET.items())
                 SAVE_ANNO_FP.write(annor)
                 # 计数
                 SAVE_CNT += 1
+            
+            elif iour.max() < configer.iouThresh[0]:                          # neg
+
+                # if i_neg < configer.rNums[0]:
+                if i_neg < i_pos * 2:
+                    # 图像
+                    imr = image[y1r: y2r, x1r: x2r]
+                    imr = cv2.resize(imr, (24, 24))
+                    pathr = SAVE_IMAGE_NAME.format(SAVE_CNT)
+                    cv2.imwrite(pathr, imr)
+                    # 标注
+                    annor = '{} {}\n'.format(pathr, configer.label['neg'])
+                    SAVE_ANNO_FP.write(annor)
+                    # 计数
+                    SAVE_CNT += 1
+                    i_neg += 1
+
+                    print('IMAGE: [{}]/[{}] | DET: [{}]/[{}] | NEG: [{}]/[{}]'.\
+                            format(i_image, n_image, i_det, boxpreds.shape[0], i_neg, configer.rNums[0]))
             
     else:                               # 来自`POINT FACE`，含关键点，仅用作关键点回归
         
