@@ -5,7 +5,7 @@
 @Author: louishsu
 @E-mail: is.louishsu@foxmail.com
 @Date: 2019-10-26 10:43:04
-@LastEditTime: 2019-11-04 16:18:38
+@LastEditTime: 2019-11-07 19:30:26
 @Update: 
 '''
 from easydict import EasyDict
@@ -20,8 +20,8 @@ configer.batchsize = 512
 configer.n_epoch = 20
 
 configer.lrbase = 1e-2
-configer.adjstep = [12, 16]
-configer.gamma = 1e-1
+# configer.adjstep = [12, 16]
+configer.gamma = 0.9
 
 configer.cuda = True
 
