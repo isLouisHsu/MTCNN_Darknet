@@ -138,6 +138,7 @@ for i_image, (imname, boxpreds_boxgts_langts) in enumerate(DETS_BY_PNET.items())
                 cv2.imwrite(pathr, imr)
                 # 计算偏移量
                 sr  = wr    # or `sr  = hr`
+                boxgt = boxgts[iour.argmax()]
                 x1f = (boxgt[0] - boxr[0]) / sr
                 y1f = (boxgt[1] - boxr[1]) / sr
                 x2f = (boxgt[2] - boxr[2]) / sr
