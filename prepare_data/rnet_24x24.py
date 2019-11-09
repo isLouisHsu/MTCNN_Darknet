@@ -68,6 +68,7 @@ if not os.path.exists(configer.rDets):  # 若已生成则跳过
             DETS_BY_PNET[imname] = [boxpreds, boxgts, landgts]
 
     io.savemat(configer.rDets, DETS_BY_PNET)
+    exit(0)
 
 else:
     DETS_BY_PNET = io.loadmat(configer.rDets)

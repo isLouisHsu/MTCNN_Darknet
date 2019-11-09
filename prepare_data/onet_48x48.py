@@ -68,14 +68,8 @@ if not os.path.exists(configer.oDets):  # 若已生成则跳过
             landgts = np.array(list(map(float, annotation[4:]))).reshape(-1, 10)
             DETS_BY_PRNET[imname] = [boxpreds, boxgts, landgts]
 
-        if i_annotation in [124, 125, 126]:
-            print(i_annotation)
-            print(imname)
-            print(DETS_BY_PRNET[imname][0].shape)
-            print(DETS_BY_PRNET[imname][1].shape)
-            print(DETS_BY_PRNET[imname][2].shape)
-
     io.savemat(configer.oDets, DETS_BY_PRNET)
+    exit(0)
 
 else:
     DETS_BY_PRNET = io.loadmat(configer.oDets)
