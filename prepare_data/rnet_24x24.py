@@ -48,6 +48,9 @@ if not os.path.exists(configer.rDets):  # 若已生成则跳过
         image  = cv2.imread(configer.images + imname, cv2.IMREAD_COLOR)
         _, boxpreds, _ = detector._detect_pnet(image)                           # x1, y1, x2, y2
 
+        if boxpreds.shape[0] == 0:
+            boxpreds = np.empty((0, 5))
+
         settype  = annotation.split('/')[0]
         if settype == 'WIDER':        # 来自`WIDER FACE`，无关键点
 

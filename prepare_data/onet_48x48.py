@@ -21,7 +21,7 @@ if not os.path.exists(configer.oImage):
     os.makedirs(configer.oImage)
 
 # 初始化全局变量
-DETS_BY_PNET = dict()
+DETS_BY_PRNET = dict()
 SAVE_CNT = 0                            # 图片保存计数
 FACE_CNT = 0                            # 人脸计数
 FACE_USED_CNT = 0                       # 使用的人脸计数
@@ -42,12 +42,15 @@ if not os.path.exists(configer.oDets):  # 若已生成则跳过
     for i_annotation, annotation in enumerate(annotations):
         bar.step()
         if torch.cuda.is_available(): torch.cuda.empty_cache()
-
+        
         # 读取图片
         imname = annotation.split('jpg')[0] + 'jpg'
         image  = cv2.imread(configer.images + imname, cv2.IMREAD_COLOR)
         _, boxpreds, _ = detector._detect_pnet(image)                           # x1, y1, x2, y2
         _, boxpreds, _ = detector._detect_rnet(image, boxpreds)
+
+        if boxpreds.shape[0] == 0:
+            boxpreds = np.empty((0, 5))
         
         settype  = annotation.split('/')[0]
         if settype == 'WIDER':        # 来自`WIDER FACE`，无关键点
@@ -57,22 +60,22 @@ if not os.path.exists(configer.oDets):  # 若已生成则跳过
                 boxgts = np.array(list(map(int, boxgts))).reshape(-1, 4)        # x1, y1,  w,  h
             except:
                 continue
-            DETS_BY_PNET[imname] = [boxpreds, boxgts, np.array([])]
+            DETS_BY_PRNET[imname] = [boxpreds, boxgts, np.array([])]
 
         else:
             annotation = annotation.split('jpg')[1].strip().split(' ')
             boxgts  = np.array(list(map(int, annotation[:4]))).reshape(-1, 4)   # x1, y1, x2, y2
             landgts = np.array(list(map(float, annotation[4:]))).reshape(-1, 10)
-            DETS_BY_PNET[imname] = [boxpreds, boxgts, landgts]
+            DETS_BY_PRNET[imname] = [boxpreds, boxgts, landgts]
 
-    io.savemat(configer.oDets, DETS_BY_PNET)
+    io.savemat(configer.oDets, DETS_BY_PRNET)
 
 else:
-    DETS_BY_PNET = io.loadmat(configer.oDets)
+    DETS_BY_PRNET = io.loadmat(configer.oDets)
 
 # 进行采样 
-n_image = len(DETS_BY_PNET)
-for i_image, (imname, boxpreds_boxgts_langts) in enumerate(DETS_BY_PNET.items()):
+n_image = len(DETS_BY_PRNET)
+for i_image, (imname, boxpreds_boxgts_langts) in enumerate(DETS_BY_PRNET.items()):
     
     if imname[:2] == '__': continue
     boxpreds, boxgts, landgts = boxpreds_boxgts_langts[0]
