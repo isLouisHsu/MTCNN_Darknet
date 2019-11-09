@@ -42,7 +42,7 @@ if not os.path.exists(configer.oDets):  # 若已生成则跳过
     for i_annotation, annotation in enumerate(annotations):
         bar.step()
         if torch.cuda.is_available(): torch.cuda.empty_cache()
-        
+
         # 读取图片
         imname = annotation.split('jpg')[0] + 'jpg'
         image  = cv2.imread(configer.images + imname, cv2.IMREAD_COLOR)
@@ -67,6 +67,13 @@ if not os.path.exists(configer.oDets):  # 若已生成则跳过
             boxgts  = np.array(list(map(int, annotation[:4]))).reshape(-1, 4)   # x1, y1, x2, y2
             landgts = np.array(list(map(float, annotation[4:]))).reshape(-1, 10)
             DETS_BY_PRNET[imname] = [boxpreds, boxgts, landgts]
+
+        if i_annotation in [124, 125, 126]:
+            print(i_annotation)
+            print(imname)
+            print(DETS_BY_PRNET[imname][0].shape)
+            print(DETS_BY_PRNET[imname][1].shape)
+            print(DETS_BY_PRNET[imname][2].shape)
 
     io.savemat(configer.oDets, DETS_BY_PRNET)
 
