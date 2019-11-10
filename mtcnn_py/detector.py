@@ -5,7 +5,7 @@
 @Author: louishsu
 @E-mail: is.louishsu@foxmail.com
 @Date: 2019-10-26 11:25:12
-@LastEditTime: 2019-11-08 11:44:47
+@LastEditTime: 2019-11-10 11:57:28
 @Update: 
 '''
 import os
@@ -504,50 +504,14 @@ def show_bbox(image, bbox, landmark=None, show_score=False):
     cv2.imshow("", image)
     cv2.waitKey(0)
 
-
-def test_24(net):
-    
-    FILE = "/home/louishsu/Desktop/patches/24/{:d}.jpg"
-    
-    outs = []
-    for i in range(184):
-        file = FILE.format(i)
-        img = ToTensor()(cv2.imread(file)).unsqueeze(0)
-        out = ' '.join(map(str, list(net(img).squeeze().detach().numpy()))) + '\n'
-        outs += [out]
-
-    with open("/home/louishsu/Desktop/patches/p_24.txt", 'w') as f:
-        f.writelines(outs)
-
-
-def test_48(net):
-    
-    FILE = "/home/louishsu/Desktop/patches/48/{:d}.jpg"
-    
-    outs = []
-    for i in range(1):
-        file = FILE.format(i)
-        img = ToTensor()(cv2.imread(file)).unsqueeze(0)
-        out = ' '.join(map(str, list(net(img).squeeze().detach().numpy()))) + '\n'
-        outs += [out]
-
-    with open("/home/louishsu/Desktop/patches/p_48.txt", 'w') as f:
-        f.writelines(outs)
-
-def test():
-    detector = MtcnnDetector(min_face=12, thresh=[0.9, 0.7, 0.7], scale=0.79, stride=2, cellsize=12)
-
-    test_24(detector.rnet)
-    test_48(detector.onet)
-
 def main():
 
     import sys
     
     detector = MtcnnDetector(min_face=12, thresh=[0.9, 0.8, 0.7], scale=0.79, stride=2, cellsize=12)
     
-    # imgfile = sys.argv[1]
-    imgfile = "../images/test.jpg"
+    imgfile = sys.argv[1]
+    # imgfile = "../images/test.jpg"
 
     image = cv2.imread(imgfile)
     
@@ -564,5 +528,5 @@ def main():
     show_bbox(image.copy(), boxes_c, landmark, True)
     
 if __name__ == "__main__":
-    # test()
+
     main()
