@@ -3,7 +3,6 @@ import cv2
 import random
 import numpy as np
 from numpy import random as npr
-from scipy import io
 
 import torch
 
@@ -21,7 +20,7 @@ if not os.path.exists(configer.rImage):
     os.makedirs(configer.rImage)
 
 # 初始化全局变量
-DETS_BY_PNET = dict()
+DETS_BY_PNET = []
 SAVE_CNT = 0                            # 图片保存计数
 FACE_CNT = 0                            # 人脸计数
 FACE_USED_CNT = 0                       # 使用的人脸计数
@@ -59,26 +58,23 @@ if not os.path.exists(configer.rDets):  # 若已生成则跳过
                 boxgts = np.array(list(map(int, boxgts))).reshape(-1, 4)        # x1, y1,  w,  h
             except:
                 continue
-            DETS_BY_PNET[imname] = [boxpreds, boxgts, np.array([])]
+            DETS_BY_PNET += [[imname, boxpreds, boxgts, np.array([])]]
 
         else:
             annotation = annotation.split('jpg')[1].strip().split(' ')
             boxgts  = np.array(list(map(int, annotation[:4]))).reshape(-1, 4)   # x1, y1, x2, y2
             landgts = np.array(list(map(float, annotation[4:]))).reshape(-1, 10)
-            DETS_BY_PNET[imname] = [boxpreds, boxgts, landgts]
+            DETS_BY_PNET += [[imname, boxpreds, boxgts, landgts]]
 
-    io.savemat(configer.rDets, DETS_BY_PNET)
-    exit(0)
+    np.save(configer.rDets, DETS_BY_PNET)
 
 else:
-    DETS_BY_PNET = io.loadmat(configer.rDets)
+    DETS_BY_PNET = np.load(configer.rDets, allow_pickle=True)
 
 # 进行采样 
 n_image = len(DETS_BY_PNET)
-for i_image, (imname, boxpreds_boxgts_langts) in enumerate(DETS_BY_PNET.items()):
+for i_image, (imname, boxpreds, boxgts, landgts) in enumerate(DETS_BY_PNET):
     
-    if imname[:2] == '__': continue
-    boxpreds, boxgts, landgts = boxpreds_boxgts_langts[0]
     # 读取图片
     image  = cv2.imread(configer.images + imname, cv2.IMREAD_COLOR)
     imH, imW = image.shape[:2]
