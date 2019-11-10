@@ -5,14 +5,13 @@
 @Author: louishsu
 @E-mail: is.louishsu@foxmail.com
 @Date: 2019-10-26 11:25:12
-@LastEditTime: 2019-11-10 11:57:28
+@LastEditTime: 2019-11-10 12:09:49
 @Update: 
 '''
 import os
 import cv2
 import numpy as np
 
-from torchstat import stat
 import torch
 import torch.cuda as cuda
 from torchvision.transforms import ToTensor
@@ -32,7 +31,7 @@ class MtcnnDetector(object):
     Content:
 
     """
-    def __init__(self, min_face=20, thresh=[0.6, 0.7, 0.7], scale=0.79, stride=2, cellsize=12):
+    def __init__(self, min_face=20, thresh=[0.6, 0.7, 0.7], scale=0.79, stride=2, cellsize=12, use_cuda=True):
         
         self.min_face = min_face
         self.thresh = thresh
@@ -48,10 +47,7 @@ class MtcnnDetector(object):
         self._load_state(self.rnet)
         self._load_state(self.onet)
 
-        # stat(self.pnet, (3, 12, 12))
-        # stat(self.rnet, (3, 24, 24))
-        # stat(self.onet, (3, 48, 48))
-        if cuda.is_available():
+        if cuda.is_available() and use_cuda:
             self.pnet.cuda()
             self.rnet.cuda()
             self.onet.cuda()
@@ -59,6 +55,8 @@ class MtcnnDetector(object):
         self.pnet.eval()
         self.rnet.eval()
         self.onet.eval()
+
+        self.use_cuda = use_cuda
 
     def _load_state(self, net):
         
@@ -139,7 +137,7 @@ class MtcnnDetector(object):
 
             ## forward network
             X = ToTensor()(cur_img).unsqueeze(0)
-            if cuda.is_available(): X = X.cuda()
+            if cuda.is_available() and self.use_cuda: X = X.cuda()
             with torch.no_grad():
                 y_pred = self.pnet(X)[0].cpu().detach().numpy()
 
@@ -208,7 +206,7 @@ class MtcnnDetector(object):
         
         ## forward network
         X = torch.cat(list(map(lambda x: ToTensor()(x).unsqueeze(0), patches)), dim=0)
-        if cuda.is_available(): X = X.cuda()
+        if cuda.is_available() and self.use_cuda: X = X.cuda()
         with torch.no_grad():
             y_pred = self.rnet(X).cpu().detach().numpy()  # (n_boxes, 15)
         scores = sigmoid(y_pred[:, 0])          # (n_boxes,)
@@ -260,7 +258,7 @@ class MtcnnDetector(object):
         
         ## forward network
         X = torch.cat(list(map(lambda x: ToTensor()(x).unsqueeze(0), patches)), dim=0)
-        if cuda.is_available(): X = X.cuda()
+        if cuda.is_available() and self.use_cuda: X = X.cuda()
         with torch.no_grad():
             y_pred = self.onet(X).cpu().detach().numpy()  # (n_boxes, 15)
         scores = sigmoid(y_pred[:, 0])          # (n_boxes,)
