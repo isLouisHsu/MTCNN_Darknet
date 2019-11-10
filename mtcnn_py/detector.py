@@ -5,7 +5,7 @@
 @Author: louishsu
 @E-mail: is.louishsu@foxmail.com
 @Date: 2019-10-26 11:25:12
-@LastEditTime: 2019-11-10 12:09:49
+@LastEditTime: 2019-11-10 12:10:42
 @Update: 
 '''
 import os
@@ -31,7 +31,7 @@ class MtcnnDetector(object):
     Content:
 
     """
-    def __init__(self, min_face=20, thresh=[0.6, 0.7, 0.7], scale=0.79, stride=2, cellsize=12, use_cuda=True):
+    def __init__(self, min_face=20, thresh=[0.6, 0.7, 0.7], scale=0.79, stride=2, cellsize=12, use_cuda=False):
         
         self.min_face = min_face
         self.thresh = thresh
