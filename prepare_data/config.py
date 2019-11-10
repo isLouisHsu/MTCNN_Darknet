@@ -5,7 +5,7 @@
 @Author: louishsu
 @E-mail: is.louishsu@foxmail.com
 @Date: 2019-10-25 11:06:37
-@LastEditTime: 2019-11-10 10:00:21
+@LastEditTime: 2019-11-10 14:06:22
 @Update: 
 '''
 from easydict import EasyDict
@@ -42,4 +42,4 @@ configer.oAnno       = ['../data/48x48.txt',
                         '../data/48x48_train.txt', 
                         '../data/48x48_valid.txt', 
                         '../data/48x48_test.txt']
-configer.oNums       = [10, -1, -1, 80]   # 分别表示每张图片`neg`, `part`, `pos`, `landmark`样本个数，由PNet结果决定
+configer.oNums       = [10, -1, -1, 60]   # 分别表示每张图片`neg`, `part`, `pos`, `landmark`样本个数，由PNet结果决定
