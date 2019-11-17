@@ -5,20 +5,20 @@
  # @Author: louishsu
  # @E-mail: is.louishsu@foxmail.com
  # @Date: 2019-11-10 11:58:54
- # @LastEditTime: 2019-11-10 12:04:37
+ # @LastEditTime: 2019-11-10 17:36:19
  # @Update: 
  ###
 #
 
 # Download weights
 
-wget -O mtcnn_py/ckptdir/PNet.pkl TODO:
-wget -O mtcnn_py/ckptdir/RNet.pkl TODO:
-wget -O mtcnn_py/ckptdir/ONet.pkl TODO:
+wget -O mtcnn_py/ckptdir/PNet.pkl https://github.com/isLouisHsu/MTCNN_Darknet/releases/download/v1.0/PNet.pkl
+wget -O mtcnn_py/ckptdir/RNet.pkl https://github.com/isLouisHsu/MTCNN_Darknet/releases/download/v1.0/RNet.pkl
+wget -O mtcnn_py/ckptdir/ONet.pkl https://github.com/isLouisHsu/MTCNN_Darknet/releases/download/v1.0/ONet.pkl
 
-wget -O mtcnn_c/weights/PNet.weights TODO:
-wget -O mtcnn_c/weights/RNet.weights TODO:
-wget -O mtcnn_c/weights/ONet.weights TODO:
+wget -O mtcnn_c/weights/PNet.weights https://github.com/isLouisHsu/MTCNN_Darknet/releases/download/v1.0/PNet.weights
+wget -O mtcnn_c/weights/RNet.weights https://github.com/isLouisHsu/MTCNN_Darknet/releases/download/v1.0/RNet.weights
+wget -O mtcnn_c/weights/ONet.weights https://github.com/isLouisHsu/MTCNN_Darknet/releases/download/v1.0/ONet.weights
 
 # Compile
 
