@@ -1,6 +1,6 @@
 ## Description
 
-训练详细过程查看[]()
+训练详细过程查看[详细！MTCNN训练全过程！](https://louishsu.xyz/2019/05/06/%E8%AF%A6%E7%BB%86%EF%BC%81MTCNN%E8%AE%AD%E7%BB%83%E5%85%A8%E8%BF%87%E7%A8%8B%EF%BC%81/).
 
 ## Requirements
 
